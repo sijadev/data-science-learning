@@ -50,6 +50,7 @@ Die Welt der Daten ist spannend, grenzenlos – und eine der gefragtesten Zukunf
 ### 🔥  „From Zero to Hero – 1 Jahr, 1 Ziel, 1 Community.“
 
 
+![Dashboard](assets/charts/dashboard.png)
 
 
 
