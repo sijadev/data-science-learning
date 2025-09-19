@@ -26,8 +26,10 @@ Die Welt der Daten ist spannend, grenzenlos – und eine der gefragtesten Zukunf
 ## Meilensteine:
 
 ### Phase 1 (Monate 1-3): 
-- Python Grundlagen
-- Statistik
+- Python Basics 
+- Python Advanced
+- Python Expert
+- Statistik Grundlagen
 - Data Analysis 
 
 ### Phase 2 (Monate 4-7): 
@@ -49,9 +51,6 @@ Die Welt der Daten ist spannend, grenzenlos – und eine der gefragtesten Zukunf
 	•	Erweitere das Repository mit eigenen Ideen
 
 ### 🔥  „From Zero to Hero – 1 Jahr, 1 Ziel, 1 Community.“
-
-
-![Dashboard](assets/charts/dashboard.png)
 
 
 
