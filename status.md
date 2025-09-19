@@ -1,4 +1,4 @@
-# 📊 Current Status - Data Science Umschulung
+# 📊 18.10.25 Status - Data Science Umschulung
 
 *Letztes Update: 19. September 2025*
 *Start-Tag: 19. September 2025*
