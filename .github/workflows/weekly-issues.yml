@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   issues: write
+  
 
 jobs:
   create-weekly-issues:
@@ -25,7 +26,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install PyGithub python-dateutil
+        pip install -r requirements
     
     - name: Calculate Current Week
       id: week
