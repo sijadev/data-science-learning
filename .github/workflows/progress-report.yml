@@ -22,6 +22,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -48,12 +50,18 @@ jobs:
           reports/week*.png
     
     - name: Commit Report
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add reports/
-        git diff --quiet && git diff --staged --quiet || git commit -m "📊 Automated: Week ${{ env.WEEK_NUM }} progress report"
-        git push
+        git add reports/ assets/ || true
+        if ! git diff --quiet --cached; then
+          git commit -m "📊 Automated: Week ${{ env.WEEK_NUM }} progress report"
+          git push
+        else
+          echo "No changes to commit"
+        fi
     
     - name: Create Report Issue
       uses: actions/github-script@v6
