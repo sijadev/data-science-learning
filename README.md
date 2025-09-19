@@ -24,25 +24,23 @@ Die Welt der Daten ist spannend, grenzenlos – und eine der gefragtesten Zukunf
 ➡️ [[GitHub Projektseite Link hier einsetzen](https://sijadev.github.io/data-science-learning/)]
 
 ## Meilensteine:
-
-### Phase 1 (Monate 1-3): 
+#### [Python Kurs](./course/python_course.md)
+### Phase 1 (Monate 1): 
 - Python Basics 
-- Python Advanced
-- Python Expert
+- Python Advanced Teil 1
+
+### Phase 2 (Monate 2-4): 
+- Python Advanced Teil 2
 - Statistik Grundlagen
-- Data Analysis 
 
-### Phase 2 (Monate 4-7): 
-- Machine Learning
-- scikit-learn
-- Model Building
-
-### Phase 3 (Monate 8-12): 
-- MLOps
-- Cloud
-- Deep Learning
-- Spezialisierung
-
+### Phase 3 (Monate 5-12): 
+- Python Expert: 
+  - NumPy, Pandas
+  - Plots
+  - Data Analysis 
+  - Machine Learning / scikit-learn
+  - Metaprogramming
+  
 ## 🙌 Mitmachen erwünscht!
 
 	•	Folge dem Projekt

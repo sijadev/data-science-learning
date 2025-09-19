@@ -61,6 +61,114 @@
             transform: scale(1.5);
             border: 1px solid #333;
         }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .nav-link {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link.active {
+            color: #e0e7ff !important;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background-color: #e0e7ff;
+            border-radius: 2px;
+        }
+
+        .course-content {
+            line-height: 1.6;
+        }
+
+        .course-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #7c3aed;
+            padding-bottom: 0.5rem;
+        }
+
+        .course-content h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #7c3aed;
+            padding-left: 1rem;
+        }
+
+        .course-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .course-content h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .course-content li {
+            margin: 0.25rem 0;
+            color: #4b5563;
+        }
+
+        .course-content a {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+
+        .course-content a:hover {
+            color: #5b21b6;
+        }
+
+        .course-content strong {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .module-section {
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .project-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #f59e0b;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -72,10 +180,11 @@
                 <h1 class="text-2xl font-bold">Data Science Journey</h1>
             </div>
             <div class="flex space-x-6">
-                <a href="#overview" class="hover:text-purple-200 transition">Overview</a>
-                <a href="#progress" class="hover:text-purple-200 transition">Progress</a>
-                <a href="#achievements" class="hover:text-purple-200 transition">Achievements</a>
-                <a href="#projects" class="hover:text-purple-200 transition">Projects</a>
+                <a onclick="showSection('overview')" class="nav-link hover:text-purple-200 transition active">Overview</a>
+                <a onclick="showSection('progress')" class="nav-link hover:text-purple-200 transition">Progress</a>
+                <a onclick="showSection('achievements')" class="nav-link hover:text-purple-200 transition">Achievements</a>
+                <a onclick="showSection('projects')" class="nav-link hover:text-purple-200 transition">Projects</a>
+                <a onclick="showSection('course')" class="nav-link hover:text-purple-200 transition">Course</a>
                 <a href="https://github.com/sijadev/data-science-learning" target="_blank" class="hover:text-purple-200 transition">
                     <i class="fab fa-github text-xl"></i>
                 </a>
@@ -108,7 +217,7 @@
     <!-- Main Content -->
     <div class="container mx-auto p-6">
         <!-- Overview Section -->
-        <section id="overview" class="mb-12">
+        <section id="overview" class="content-section active mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
                 <i class="fas fa-chart-line text-purple-600 mr-2"></i>Current Status
             </h3>
@@ -173,10 +282,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Weekly Goals for Overview/Homepage -->
+            <div class="mt-12">
+                <h4 class="text-2xl font-bold mb-6 text-gray-800">
+                    <i class="fas fa-bullseye text-purple-600 mr-2"></i>This Week's Goals
+                </h4>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="space-y-3" id="overviewWeeklyGoals">
+                        <!-- Goals will be populated here -->
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Progress Section -->
-        <section id="progress" class="mb-12">
+        <section id="progress" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
                 <i class="fas fa-tasks text-purple-600 mr-2"></i>Learning Progress
             </h3>
@@ -240,7 +362,7 @@
         </section>
 
         <!-- Achievements Section -->
-        <section id="achievements" class="mb-12">
+        <section id="achievements" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
                 <i class="fas fa-medal text-purple-600 mr-2"></i>Achievements
             </h3>
@@ -251,25 +373,27 @@
         </section>
 
         <!-- Projects Section -->
-        <section id="projects" class="mb-12">
+        <section id="projects" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
                 <i class="fas fa-project-diagram text-purple-600 mr-2"></i>Portfolio Projects
             </h3>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectsGrid">
                 <!-- Projects will be populated here -->
             </div>
         </section>
 
-        <!-- Weekly Goals -->
-        <section class="mb-12">
+        <!-- Course Section -->
+        <section id="course" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-bullseye text-purple-600 mr-2"></i>This Week's Goals
+                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Python Course Overview
             </h3>
-            
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <div class="space-y-3" id="weeklyGoals">
-                    <!-- Goals will be populated here -->
+
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="p-6">
+                    <div class="prose max-w-none" id="courseContent">
+                        <!-- Course content will be populated here -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -525,8 +649,8 @@
 
         // Load weekly goals
         function loadWeeklyGoals() {
-            const container = document.getElementById('weeklyGoals');
-            
+            const container = document.getElementById('overviewWeeklyGoals');
+
             journeyData.weeklyGoals.forEach(goal => {
                 const div = document.createElement('div');
                 div.className = 'flex items-center p-3 rounded hover:bg-gray-50';
@@ -536,6 +660,346 @@
                 `;
                 container.appendChild(div);
             });
+        }
+
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Update navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+
+            // Load course content if course section is selected
+            if (sectionId === 'course') {
+                loadCourseContent();
+            }
+        }
+
+        // Load and display course content
+        function loadCourseContent() {
+            const courseContentData = `# Python Overview:
+
+## 🎯 Teil 1: Python Grundlagen (~3 Wochen / 22 Tage)
+
+### Modul 1: Erste Schritte mit Python
+[Zum Modul1-Ordner](part1_basics/modul_1/)
+#### 1.1 Installation und Einrichtung (0,5 Tag)
+- Python Installation
+- VS Code / PyCharm Setup
+- Erste "Hello World" Programme
+
+#### 1.2 Grundlegende Syntax (0,5 Tag)
+- Interaktive Python-Shell (REPL)
+- Python-Philosophie (PEP 8)
+- Einrückungen und Code-Struktur
+- Kommentare und Dokumentation
+
+### Modul 2: Datentypen und Variablen
+[Zum Modul2-Ordner](part1_basics/modul_2/)
+#### 2.1 Basis-Datentypen (0,5 Tage)
+- Integer, Float, Complex
+- Strings und String-Operationen
+- Boolean und None
+- Type Casting
+
+#### 2.2 Variablen und Operatoren (0,5 Tage)
+- Variablenzuweisung
+- Arithmetische Operatoren
+- Vergleichsoperatoren
+- Logische Operatoren
+- Bitweise Operatoren
+
+### Modul 3: Kontrollstrukturen
+[Zum Modul3-Ordner](part1_basics/modul_3/)
+#### 3.1 Bedingte Anweisungen (1 Tag)
+- if, elif, else
+- Verschachtelte Bedingungen
+- Ternärer Operator
+- match-case (Python 3.10+)
+
+#### 3.2 Schleifen (1 Tag)
+- for-Schleifen
+- while-Schleifen
+- break und continue
+- else in Schleifen
+- range() und enumerate()
+
+### Modul 4: Datenstrukturen
+[Zum Modul4-Ordner](part1_basics/modul_4/)
+#### 4.1 Listen (1 Tag)
+- Listen erstellen und manipulieren
+- List Comprehensions
+- Slicing und Indizierung
+- Wichtige Listen-Methoden
+
+#### 4.2 Tupel (1 Tag)
+- Unveränderliche Sequenzen
+- Tuple Unpacking
+- Named Tuples
+
+#### 4.3 Dictionaries (0,5 Tage)
+- Key-Value Paare
+- Dictionary Comprehensions
+- Wichtige Dictionary-Methoden
+- defaultdict und OrderedDict
+
+#### 4.4 Sets (0,5 Tage)
+- Mengenoperationen
+- Set Comprehensions
+- frozen sets
+
+### Modul 5: Funktionen Grundlagen
+[Zum Modul5-Ordner](part1_basics/modul_5/)
+#### 5.1 Funktionsdefinition (0,5 Tage)
+- Parameter und Argumente
+- Return-Werte
+- Docstrings
+- Default-Parameter
+
+#### 5.2 Scope und Namespaces (0,5 Tage)
+- Local vs. Global
+- nonlocal Keyword
+- LEGB-Regel
+
+### 🎯 Praxisprojekt Grundlagen (14 Tage)
+**Testdaten-Manager**: Erstelle ein einfaches Testdatengenerator mit:
+- ...
+
+---
+
+## 🚀 Teil 2: Python Fortgeschritten (9 Wochen / 72 Tage)
+
+### Modul 6: Erweiterte Funktionskonzepte
+#### 6.1 Funktionale Programmierung (3 Tage)
+- Lambda-Funktionen
+- map(), filter(), reduce()
+- Funktionen höherer Ordnung
+- Closures
+
+#### 6.2 Decorators (2 Tage)
+- Function Decorators
+- Class Decorators
+- Property Decorators
+- Decorator mit Parametern
+
+#### 6.3 Generators und Iterators (2 Tage)
+- yield Keyword
+- Generator Expressions
+- iter() und next()
+- Eigene Iteratoren erstellen
+
+### Modul 7: Objektorientierte Programmierung (OOP)
+#### 7.1 Klassen und Objekte (4 Tage)
+- Klassendefinition
+- Konstruktoren (__init__)
+- Instance vs. Class Attributes
+- Methods (Instance, Class, Static)
+
+#### 7.2 OOP-Prinzipien (5 Tage)
+- Vererbung (Single, Multiple)
+- Polymorphismus
+- Encapsulation
+- Abstraction (ABC Module)
+
+#### 7.3 Magic Methods (4 Tage)
+- __str__ und __repr__
+- __len__, __getitem__, __setitem__
+- Operator Overloading
+- Context Managers (__enter__, __exit__)
+
+### Modul 8: Fehlerbehandlung und Debugging
+#### 8.1 Exception Handling (2 Tage)
+- try, except, else, finally
+- Eigene Exceptions
+- Exception Hierarchie
+- raise und assert
+
+#### 8.2 Logging und Debugging (4 Tage)
+- logging Module
+- Debug-Techniken
+- pdb Debugger
+- Unit Testing mit unittest
+
+### Modul 9: File I/O und Datenformate
+#### 9.1 Dateioperationen (4 Tage)
+- Dateien lesen und schreiben
+- Context Managers (with statement)
+- Binary Files
+- CSV und JSON
+
+#### 9.2 Reguläre Ausdrücke (7 Tage)
+- re Module
+- Pattern Matching
+- Groups und Capturing
+- Substitution
+
+### Modul 10: Module und Packages
+#### 10.1 Module erstellen (3 Tage)
+- import Mechanismen
+- __name__ == "__main__"
+- Package Struktur
+- setup.py und pip
+
+#### 10.2 Standardbibliothek (2 Tage)
+- os und sys
+- datetime
+- collections
+- itertools
+
+### 🎯 Praxisprojekt Fortgeschritten (14 Tage)
+**Web Scraper und API Client**: Entwickle einen Web Scraper mit:
+- BeautifulSoup für HTML-Parsing
+- requests für HTTP-Anfragen
+- Datenextraktion und -speicherung
+- RESTful API Integration
+
+---
+
+## 💡 Teil 3: Python Experte (27 Wochen / 189 Tage)
+
+### Modul 11: Concurrent Programming
+#### 11.1 Threading (7 Tage)
+- Thread-Erstellung
+- Locks und Semaphores
+- Thread Pools
+- GIL (Global Interpreter Lock)
+
+#### 11.2 Multiprocessing (14 Tage)
+- Process-Erstellung
+- Interprocess Communication
+- Process Pools
+- Shared Memory
+
+#### 11.3 Async Programming (14 Tage)
+- async und await
+- asyncio Module
+- Coroutines
+- Event Loops
+
+### Modul 12: Data Science Stack
+#### 12.1 NumPy (14 Tage)
+- Arrays und Matrizen
+- Broadcasting
+- Vektorisierte Operationen
+- Linear Algebra
+
+#### 12.2 Pandas (14 Tage)
+- DataFrames und Series
+- Datenmanipulation
+- GroupBy Operationen
+- Merge und Join
+
+#### 12.3 Matplotlib & Seaborn (14 Tage)
+- Grundlegende Plots
+- Subplots und Layouts
+- Statistische Visualisierungen
+- Interaktive Plots
+
+### Modul 13: Machine Learning
+#### 13.1 Scikit-learn Grundlagen (21 Tage)
+- Supervised Learning
+- Unsupervised Learning
+- Model Evaluation
+- Feature Engineering
+
+#### 13.2 Deep Learning mit PyTorch (28 Tage)
+- Tensoren
+- Neural Networks
+- Training Loop
+- Model Deployment
+
+### Modul 14: Web Development
+#### 14.1 Flask Framework (0 Tage)
+- Routing
+- Templates (Jinja2)
+- Forms und Validation
+- Database Integration (SQLAlchemy)
+
+#### 14.2 Django Framework (0 Tage)
+- MTV Architecture
+- Models und Migrations
+- Views und URLs
+- Admin Interface
+- REST Framework
+
+### Modul 15: Advanced Topics
+#### 15.1 Metaprogramming (14 Tage)
+- Metaclasses
+- Descriptors
+- Dynamic Class Creation
+- Attribute Access Control
+
+#### 15.2 Performance Optimization (21 Tage)
+- Profiling (cProfile, line_profiler)
+- Memory Management
+- Cython
+- NumPy Optimization
+
+#### 15.3 Design Patterns (28 Tage)
+- Singleton
+- Factory
+- Observer
+- Strategy
+- Decorator Pattern
+
+### 🎯 Praxisprojekt Experte
+**Full-Stack Data Dashboard**: Erstelle eine vollständige Datenanalyse-Plattform mit:
+- Pandas für Datenverarbeitung
+- Machine Learning Modelle
+- Echtzeit-Datenvisualisierung
+
+---`;
+
+            const contentContainer = document.getElementById('courseContent');
+            contentContainer.innerHTML = formatMarkdownContent(courseContentData);
+        }
+
+        // Simple markdown to HTML formatter
+        function formatMarkdownContent(markdown) {
+            let html = markdown
+                // Headers
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Links
+                .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2">$1</a>')
+                // Line breaks
+                .replace(/\n/g, '<br>')
+                // Lists
+                .replace(/^- (.*$)/gim, '<li>$1</li>')
+                // Wrap consecutive list items in ul
+                .replace(/(<li>.*?<\/li>)/gs, function(match) {
+                    return '<ul>' + match.replace(/<br>/g, '') + '</ul>';
+                })
+                // Handle project sections
+                .replace(/### 🎯 (.*?)<br>/g, '<div class="project-section"><h3>🎯 $1</h3>')
+                .replace(/\*\*(.*?)\*\*:/g, '<strong>$1:</strong>')
+                // Clean up multiple breaks
+                .replace(/(<br>){3,}/g, '<br><br>');
+
+            // Close project sections
+            html = html.replace(/(🎯.*?<\/strong>.*?)(<h2>|$)/gs, '$1</div>$2');
+
+            return '<div class="course-content">' + html + '</div>';
         }
 
         // Load data from JSON files (in real implementation)
@@ -562,6 +1026,8 @@
             loadProjects();
             loadWeeklyGoals();
             loadDataFromFiles();
+            // Don't load course content initially
+        }
         };
 
         // Auto-refresh every minute
