@@ -6,6 +6,10 @@ on:
     - cron: '0 20 * * 0'
   workflow_dispatch: # Manuell triggern möglich
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   create-weekly-issues:
     runs-on: ubuntu-latest
