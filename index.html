@@ -437,13 +437,63 @@
         <!-- Course Section -->
         <section id="course" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Python Course Overview
+                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Python Course
             </h3>
 
-            <div class="bg-white rounded-lg shadow-lg">
-                <div class="p-6">
-                    <div class="prose max-w-none" id="courseContent">
-                        <!-- Course content will be populated here -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Course Navigation -->
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    <h4 class="text-lg font-semibold mb-4 text-gray-800">Course Navigation</h4>
+                    <div id="courseNavigation">
+                        <!-- Navigation will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Course Content -->
+                <div class="lg:col-span-3 bg-white rounded-lg shadow-lg">
+                    <div class="p-6">
+                        <!-- Breadcrumb -->
+                        <nav class="mb-4">
+                            <ol class="flex space-x-2 text-sm text-gray-600">
+                                <li id="courseBreadcrumb">Course Overview</li>
+                            </ol>
+                        </nav>
+
+                        <!-- Content Area -->
+                        <div id="courseContentArea">
+                            <div id="courseOverview">
+                                <h2 class="text-2xl font-bold mb-4">Python Komplettkurs</h2>
+                                <p class="text-gray-600 mb-6">Wählen Sie ein Modul aus der Navigation, um mit dem Lernen zu beginnen.</p>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part1_basics')">
+                                        <h3 class="font-semibold text-lg">📚 Teil 1</h3>
+                                        <p class="text-sm text-gray-600">Python Grundlagen</p>
+                                        <p class="text-xs text-purple-600">22 Tage</p>
+                                    </div>
+                                    <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part2_advanced')">
+                                        <h3 class="font-semibold text-lg">🚀 Teil 2</h3>
+                                        <p class="text-sm text-gray-600">Fortgeschritten</p>
+                                        <p class="text-xs text-purple-600">72 Tage</p>
+                                    </div>
+                                    <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part3_expert')">
+                                        <h3 class="font-semibold text-lg">💡 Teil 3</h3>
+                                        <p class="text-sm text-gray-600">Python Experte</p>
+                                        <p class="text-xs text-purple-600">189 Tage</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Module Content Area -->
+                            <div id="moduleContent" style="display: none;">
+                                <!-- Module content will be loaded here -->
+                            </div>
+
+                            <!-- Task Content Area -->
+                            <div id="taskContent" style="display: none;">
+                                <!-- Task content will be loaded here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -737,8 +787,290 @@
         // Make loadCourseContent available globally for showSection
         window.loadCourseContent = loadCourseContent;
 
+        // Course Structure Data
+        const courseStructure = {
+            'part1_basics': {
+                name: 'Teil 1: Python Grundlagen',
+                duration: '22 Tage',
+                modules: {
+                    'modul_1': {
+                        name: 'Modul 1: Erste Schritte mit Python',
+                        topics: {
+                            '1.1': { name: 'Installation und Einrichtung', duration: '0.5 Tag' },
+                            '1.2': { name: 'Grundlegende Syntax', duration: '0.5 Tag' }
+                        }
+                    },
+                    'modul_2': {
+                        name: 'Modul 2: Datentypen und Variablen',
+                        topics: {
+                            '2.1': { name: 'Basis-Datentypen', duration: '0.5 Tage' },
+                            '2.2': { name: 'Variablen und Operatoren', duration: '0.5 Tage' }
+                        }
+                    },
+                    'modul_3': {
+                        name: 'Modul 3: Kontrollstrukturen',
+                        topics: {
+                            '3.1': { name: 'Bedingte Anweisungen', duration: '1 Tag' },
+                            '3.2': { name: 'Schleifen', duration: '1 Tag' }
+                        }
+                    },
+                    'modul_4': {
+                        name: 'Modul 4: Datenstrukturen',
+                        topics: {
+                            '4.1': { name: 'Listen', duration: '1 Tag' },
+                            '4.2': { name: 'Tupel', duration: '1 Tag' },
+                            '4.3': { name: 'Dictionaries', duration: '0.5 Tage' },
+                            '4.4': { name: 'Sets', duration: '0.5 Tage' }
+                        }
+                    },
+                    'modul_5': {
+                        name: 'Modul 5: Funktionen Grundlagen',
+                        topics: {
+                            '5.1': { name: 'Funktionsdefinition', duration: '0.5 Tage' },
+                            '5.2': { name: 'Scope und Namespaces', duration: '0.5 Tage' }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Course Navigation Functions
+        function loadCoursePart(partId) {
+            const part = courseStructure[partId];
+            if (!part) return;
+
+            // Update breadcrumb
+            document.getElementById('courseBreadcrumb').innerHTML = `
+                <a href="#" onclick="showCourseOverview()" class="text-purple-600 hover:underline">Course</a>
+                <span class="mx-2">></span>
+                <span>${part.name}</span>
+            `;
+
+            // Hide overview, show module content
+            document.getElementById('courseOverview').style.display = 'none';
+            document.getElementById('moduleContent').style.display = 'block';
+            document.getElementById('taskContent').style.display = 'none';
+
+            // Load navigation
+            loadCourseNavigation(partId);
+
+            // Load module list
+            loadModuleList(partId);
+        }
+
+        function loadCourseNavigation(currentPart = null) {
+            const nav = document.getElementById('courseNavigation');
+            let html = '<div class="space-y-2">';
+
+            // Overview link
+            html += `<div class="py-2 px-3 rounded hover:bg-gray-100 cursor-pointer" onclick="showCourseOverview()">
+                <i class="fas fa-home mr-2"></i>Overview
+            </div>`;
+
+            // Course parts
+            Object.keys(courseStructure).forEach(partId => {
+                const part = courseStructure[partId];
+                const isActive = partId === currentPart;
+
+                html += `<div class="py-2 px-3 rounded ${isActive ? 'bg-purple-100 text-purple-800' : 'hover:bg-gray-100'} cursor-pointer" onclick="loadCoursePart('${partId}')">
+                    <div class="font-medium">${part.name}</div>
+                    <div class="text-xs text-gray-500">${part.duration}</div>
+                </div>`;
+
+                // Show modules if this part is active
+                if (isActive && part.modules) {
+                    Object.keys(part.modules).forEach(moduleId => {
+                        const module = part.modules[moduleId];
+                        html += `<div class="ml-4 py-1 px-3 rounded hover:bg-gray-100 cursor-pointer text-sm" onclick="loadModule('${partId}', '${moduleId}')">
+                            <i class="fas fa-book mr-2"></i>${module.name}
+                        </div>`;
+                    });
+                }
+            });
+
+            html += '</div>';
+            nav.innerHTML = html;
+        }
+
+        function loadModuleList(partId) {
+            const part = courseStructure[partId];
+            const content = document.getElementById('moduleContent');
+
+            let html = `<h2 class="text-2xl font-bold mb-4">${part.name}</h2>`;
+            html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+
+            Object.keys(part.modules).forEach(moduleId => {
+                const module = part.modules[moduleId];
+                html += `
+                    <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadModule('${partId}', '${moduleId}')">
+                        <h3 class="font-semibold text-lg mb-2">${module.name}</h3>
+                        <div class="space-y-1">
+                `;
+
+                Object.keys(module.topics).forEach(topicId => {
+                    const topic = module.topics[topicId];
+                    html += `<div class="text-sm text-gray-600">• ${topic.name} (${topic.duration})</div>`;
+                });
+
+                html += `
+                        </div>
+                        <div class="mt-3">
+                            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
+                                ${Object.keys(module.topics).length} Themen
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function loadModule(partId, moduleId) {
+            const part = courseStructure[partId];
+            const module = part.modules[moduleId];
+
+            // Update breadcrumb
+            document.getElementById('courseBreadcrumb').innerHTML = `
+                <a href="#" onclick="showCourseOverview()" class="text-purple-600 hover:underline">Course</a>
+                <span class="mx-2">></span>
+                <a href="#" onclick="loadCoursePart('${partId}')" class="text-purple-600 hover:underline">${part.name}</a>
+                <span class="mx-2">></span>
+                <span>${module.name}</span>
+            `;
+
+            // Show task content
+            document.getElementById('courseOverview').style.display = 'none';
+            document.getElementById('moduleContent').style.display = 'none';
+            document.getElementById('taskContent').style.display = 'block';
+
+            // Load module content
+            loadModuleContent(partId, moduleId);
+        }
+
+        async function loadModuleContent(partId, moduleId) {
+            const content = document.getElementById('taskContent');
+            const module = courseStructure[partId].modules[moduleId];
+
+            let html = `
+                <h2 class="text-2xl font-bold mb-4">${module.name}</h2>
+                <div class="space-y-6">
+            `;
+
+            // Add topics
+            Object.keys(module.topics).forEach(topicId => {
+                const topic = module.topics[topicId];
+                html += `
+                    <div class="border rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-3">${topicId} ${topic.name}</h3>
+                        <p class="text-gray-600 mb-4">Dauer: ${topic.duration}</p>
+
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2">📝 Aufgabe:</h4>
+                            <p class="text-gray-700 mb-4">Lerninhalte und Übungen für ${topic.name}</p>
+
+                            <div class="flex space-x-3">
+                                <button onclick="loadCodeExample('${partId}', '${moduleId}', '${topicId}')"
+                                        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                    <i class="fas fa-code mr-2"></i>Code Beispiel
+                                </button>
+                                <button onclick="loadSolution('${partId}', '${moduleId}', '${topicId}')"
+                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                    <i class="fas fa-check mr-2"></i>Lösung
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Try to load Python files from GitHub
+            html += await loadPythonFiles(partId, moduleId);
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        async function loadPythonFiles(partId, moduleId) {
+            try {
+                const repoPath = `course/python/${partId}/${moduleId}`;
+                const apiUrl = `https://api.github.com/repos/sijadev/data-science-learning/contents/${repoPath}`;
+
+                const response = await fetch(apiUrl);
+                const files = await response.json();
+
+                let html = '<div class="mt-6"><h4 class="text-lg font-semibold mb-3">📁 Verfügbare Dateien:</h4>';
+
+                files.filter(file => file.name.endsWith('.py')).forEach(file => {
+                    html += `
+                        <div class="border rounded-lg p-4 mb-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">${file.name}</span>
+                                <button onclick="showPythonFile('${file.download_url}', '${file.name}')"
+                                        class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                    <i class="fas fa-eye mr-1"></i>Anzeigen
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                return html;
+            } catch (error) {
+                return '<div class="mt-6 text-gray-500">Keine Python-Dateien gefunden.</div>';
+            }
+        }
+
+        async function showPythonFile(url, filename) {
+            try {
+                const response = await fetch(url);
+                const code = await response.text();
+
+                const content = document.getElementById('taskContent');
+                content.innerHTML += `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">${filename}</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="p-4">
+                                <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto"><code>${code}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                alert('Fehler beim Laden der Datei: ' + error.message);
+            }
+        }
+
+        function showCourseOverview() {
+            document.getElementById('courseBreadcrumb').textContent = 'Course Overview';
+            document.getElementById('courseOverview').style.display = 'block';
+            document.getElementById('moduleContent').style.display = 'none';
+            document.getElementById('taskContent').style.display = 'none';
+            loadCourseNavigation();
+        }
+
+        // Make functions globally available
+        window.loadCoursePart = loadCoursePart;
+        window.loadModule = loadModule;
+        window.showCourseOverview = showCourseOverview;
+        window.showPythonFile = showPythonFile;
+
         // Load and display course content
         function loadCourseContent() {
+            // Initialize course navigation when course section is loaded
+            loadCourseNavigation();
+        }
+
+        // Legacy course content loading (keeping for reference)
+        function loadLegacyCourseContent() {
             const contentContainer = document.getElementById('courseContent');
 
             if (!contentContainer) {
