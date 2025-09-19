@@ -169,8 +169,12 @@ def main():
     
     # Generate report
     report = generate_report(metrics)
+
+    # Create reports directory if it doesn't exist
+    os.makedirs('reports', exist_ok=True)
+
     report_path = f'reports/week{week_num}-report.md'
-    
+
     with open(report_path, 'w') as f:
         f.write(report)
     

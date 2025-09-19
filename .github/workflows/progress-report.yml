@@ -35,11 +35,16 @@ jobs:
         pip install -r requirements.txt
 
     - name: Collect Metrics
+      id: metrics
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
-        python .github/scripts/generate_progress_report.py
+        output=$(python .github/scripts/generate_progress_report.py)
+        echo "$output"
+        week_num=$(echo "$output" | grep "WEEK_NUM=" | cut -d= -f2)
+        echo "WEEK_NUM=$week_num" >> $GITHUB_ENV
+        echo "week_num=$week_num" >> $GITHUB_OUTPUT
     
     - name: Upload Report
       uses: actions/upload-artifact@v4
@@ -68,13 +73,21 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const reportPath = `reports/week${process.env.WEEK_NUM}-report.md`;
+          const weekNum = '${{ env.WEEK_NUM }}';
+          const reportPath = `reports/week${weekNum}-report.md`;
+
+          // Check if file exists
+          if (!fs.existsSync(reportPath)) {
+            console.log(`Report file not found: ${reportPath}`);
+            return;
+          }
+
           const reportContent = fs.readFileSync(reportPath, 'utf8');
-          
-          github.rest.issues.create({
+
+          await github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            title: `📊 Week ${process.env.WEEK_NUM} Progress Report`,
+            title: `📊 Week ${weekNum} Progress Report`,
             body: reportContent,
             labels: ['progress-report', 'automated']
           });
