@@ -170,6 +170,57 @@
             border-left: 4px solid #f59e0b;
         }
     </style>
+
+    <script>
+        // Define showSection immediately for navigation to work
+        function showSection(sectionId, clickedElement) {
+            // Wait for DOM to be ready if needed
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    showSection(sectionId, clickedElement);
+                });
+                return;
+            }
+
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Update navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Add active class to clicked nav link
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+
+            // Load course content if course section is selected
+            if (sectionId === 'course') {
+                // Call loadCourseContent when it's available
+                if (typeof window.loadCourseContent === 'function') {
+                    window.loadCourseContent();
+                } else {
+                    // If not yet loaded, wait for page load
+                    window.addEventListener('load', function() {
+                        if (typeof window.loadCourseContent === 'function') {
+                            window.loadCourseContent();
+                        }
+                    });
+                }
+            }
+        }
+    </script>
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
@@ -683,42 +734,8 @@
             });
         }
 
-        // Navigation functionality - make it globally available
-        window.showSection = function(sectionId, clickedElement) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // Show selected section
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-
-            // Update navigation links
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-
-            // Add active class to clicked nav link
-            if (clickedElement) {
-                clickedElement.classList.add('active');
-            } else {
-                // Find the nav link by onclick attribute
-                const activeNavLink = document.querySelector(`[onclick*="'${sectionId}'"]`);
-                if (activeNavLink) {
-                    activeNavLink.classList.add('active');
-                }
-            }
-
-            // Load course content if course section is selected
-            if (sectionId === 'course') {
-                loadCourseContent();
-            }
-        }
+        // Make loadCourseContent available globally for showSection
+        window.loadCourseContent = loadCourseContent;
 
         // Load and display course content
         function loadCourseContent() {
