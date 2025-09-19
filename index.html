@@ -246,7 +246,7 @@
     <!-- Hero Section -->
     <section class="gradient-bg text-white py-20">
         <div class="container mx-auto text-center">
-            <h2 class="text-5xl font-bold mb-4">From QA Engineer to Data Scientist</h2>
+            <h2 class="text-5xl font-bold mb-4">From Zero to Data Scientist Hero</h2>
             <p class="text-xl mb-8">12-Month Learning Journey • Started September 19, 2025</p>
             <div class="flex justify-center space-x-8">
                 <div class="text-center">
@@ -971,11 +971,15 @@
                             <p class="text-gray-700 mb-4">Lerninhalte und Übungen für ${topic.name}</p>
 
                             <div class="flex space-x-3">
-                                <button onclick="loadCodeExample('${partId}', '${moduleId}', '${topicId}')"
+                                <button onclick="showCodeExample('${partId}', '${moduleId}', '${topicId}')"
                                         class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
                                     <i class="fas fa-code mr-2"></i>Code Beispiel
                                 </button>
-                                <button onclick="loadSolution('${partId}', '${moduleId}', '${topicId}')"
+                                <button onclick="showLearningContent('${partId}', '${moduleId}', '${topicId}')"
+                                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    <i class="fas fa-book mr-2"></i>Lerninhalte
+                                </button>
+                                <button onclick="showTaskSolution('${partId}', '${moduleId}', '${topicId}')"
                                         class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                                     <i class="fas fa-check mr-2"></i>Lösung
                                 </button>
@@ -1027,19 +1031,36 @@
             try {
                 const response = await fetch(url);
                 const code = await response.text();
+                const explanations = explainPythonCode(code);
 
                 const content = document.getElementById('taskContent');
                 content.innerHTML += `
                     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                        <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
                             <div class="p-4 border-b flex justify-between items-center">
                                 <h3 class="text-lg font-semibold">${filename}</h3>
-                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                <div class="flex space-x-2">
+                                    <button onclick="toggleCodeExplanation()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                        <i class="fas fa-lightbulb mr-1"></i>Erklärung
+                                    </button>
+                                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="p-4">
-                                <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto"><code>${code}</code></pre>
+                            <div class="flex">
+                                <!-- Code Section -->
+                                <div class="w-1/2 p-4 border-r">
+                                    <h4 class="font-semibold mb-2">📄 Code:</h4>
+                                    <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm"><code>${code}</code></pre>
+                                </div>
+                                <!-- Explanation Section -->
+                                <div class="w-1/2 p-4" id="codeExplanationPanel">
+                                    <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
+                                    <div class="space-y-3 text-sm">
+                                        ${explanations}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1047,6 +1068,170 @@
             } catch (error) {
                 alert('Fehler beim Laden der Datei: ' + error.message);
             }
+        }
+
+        function toggleCodeExplanation() {
+            const panel = document.getElementById('codeExplanationPanel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        function explainPythonCode(code) {
+            const lines = code.split('\n');
+            let explanations = '';
+            let lineNumber = 1;
+
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine === '' || trimmedLine.startsWith('#')) {
+                    lineNumber++;
+                    return; // Skip empty lines and comments
+                }
+
+                const explanation = explainCodeLine(trimmedLine, lineNumber);
+                if (explanation) {
+                    explanations += `
+                        <div class="border-l-4 border-blue-500 pl-3 py-2 bg-blue-50">
+                            <div class="font-mono text-xs text-gray-600">Zeile ${lineNumber}:</div>
+                            <div class="font-mono text-sm text-gray-800 mb-1">${escapeHtml(trimmedLine)}</div>
+                            <div class="text-gray-700">${explanation}</div>
+                        </div>
+                    `;
+                }
+                lineNumber++;
+            });
+
+            return explanations || '<div class="text-gray-500">Keine spezifischen Erklärungen verfügbar.</div>';
+        }
+
+        function explainCodeLine(line, lineNumber) {
+            // Python code patterns and their explanations
+            const patterns = [
+                {
+                    regex: /^print\s*\(/,
+                    explanation: '🖨️ <strong>Print-Statement:</strong> Gibt Text oder Variablen auf der Konsole aus.'
+                },
+                {
+                    regex: /^def\s+(\w+)\s*\(/,
+                    explanation: '🔧 <strong>Funktionsdefinition:</strong> Erstellt eine wiederverwendbare Funktion.'
+                },
+                {
+                    regex: /^if\s+.+:/,
+                    explanation: '🔀 <strong>If-Bedingung:</strong> Führt Code nur aus, wenn die Bedingung erfüllt ist.'
+                },
+                {
+                    regex: /^elif\s+.+:/,
+                    explanation: '🔀 <strong>Elif-Bedingung:</strong> Alternative Bedingung, wenn die vorherige nicht erfüllt ist.'
+                },
+                {
+                    regex: /^else\s*:/,
+                    explanation: '🔀 <strong>Else:</strong> Wird ausgeführt, wenn keine der vorherigen Bedingungen erfüllt ist.'
+                },
+                {
+                    regex: /^for\s+.+\s+in\s+.+:/,
+                    explanation: '🔄 <strong>For-Schleife:</strong> Wiederholt Code für jedes Element in einer Sammlung.'
+                },
+                {
+                    regex: /^while\s+.+:/,
+                    explanation: '🔄 <strong>While-Schleife:</strong> Wiederholt Code solange eine Bedingung erfüllt ist.'
+                },
+                {
+                    regex: /^import\s+(\w+)/,
+                    explanation: '📦 <strong>Import:</strong> Lädt ein externes Modul oder eine Bibliothek.'
+                },
+                {
+                    regex: /^from\s+(\w+)\s+import/,
+                    explanation: '📦 <strong>From-Import:</strong> Importiert spezifische Funktionen aus einem Modul.'
+                },
+                {
+                    regex: /^class\s+(\w+)/,
+                    explanation: '🏗️ <strong>Klassendefinition:</strong> Erstellt eine neue Klasse (Bauplan für Objekte).'
+                },
+                {
+                    regex: /^return\s+/,
+                    explanation: '↩️ <strong>Return:</strong> Gibt einen Wert aus der Funktion zurück.'
+                },
+                {
+                    regex: /^try\s*:/,
+                    explanation: '🛡️ <strong>Try-Block:</strong> Versucht Code auszuführen und fängt mögliche Fehler ab.'
+                },
+                {
+                    regex: /^except/,
+                    explanation: '❌ <strong>Except-Block:</strong> Behandelt Fehler, die im Try-Block auftreten.'
+                },
+                {
+                    regex: /\s*=\s*\[.*\]/,
+                    explanation: '📋 <strong>Listen-Erstellung:</strong> Erstellt eine Liste mit mehreren Werten.'
+                },
+                {
+                    regex: /\s*=\s*\{.*\}/,
+                    explanation: '📖 <strong>Dictionary-Erstellung:</strong> Erstellt ein Wörterbuch mit Schlüssel-Wert-Paaren.'
+                },
+                {
+                    regex: /\s*=\s*\(.*\)/,
+                    explanation: '📦 <strong>Tuple-Erstellung:</strong> Erstellt ein unveränderliches Tupel.'
+                },
+                {
+                    regex: /^(\w+)\s*=\s*(.+)/,
+                    explanation: '📝 <strong>Variablen-Zuweisung:</strong> Speichert einen Wert in einer Variablen.'
+                },
+                {
+                    regex: /\.append\(/,
+                    explanation: '➕ <strong>Append-Methode:</strong> Fügt ein Element am Ende einer Liste hinzu.'
+                },
+                {
+                    regex: /\.split\(/,
+                    explanation: '✂️ <strong>Split-Methode:</strong> Teilt einen String in eine Liste auf.'
+                },
+                {
+                    regex: /\.join\(/,
+                    explanation: '🔗 <strong>Join-Methode:</strong> Verbindet Listenelemente zu einem String.'
+                },
+                {
+                    regex: /len\(/,
+                    explanation: '📏 <strong>Len-Funktion:</strong> Gibt die Anzahl der Elemente zurück.'
+                },
+                {
+                    regex: /range\(/,
+                    explanation: '🔢 <strong>Range-Funktion:</strong> Erstellt eine Zahlensequenz.'
+                },
+                {
+                    regex: /input\(/,
+                    explanation: '⌨️ <strong>Input-Funktion:</strong> Wartet auf Benutzereingabe.'
+                },
+                {
+                    regex: /^#/,
+                    explanation: '💬 <strong>Kommentar:</strong> Erklärung für Menschen, wird nicht ausgeführt.'
+                }
+            ];
+
+            for (const pattern of patterns) {
+                if (pattern.regex.test(line)) {
+                    return pattern.explanation;
+                }
+            }
+
+            // Check for specific Python keywords
+            if (line.includes('==')) {
+                return '⚖️ <strong>Gleichheits-Vergleich:</strong> Prüft ob zwei Werte gleich sind.';
+            }
+            if (line.includes('!=')) {
+                return '⚖️ <strong>Ungleichheits-Vergleich:</strong> Prüft ob zwei Werte unterschiedlich sind.';
+            }
+            if (line.includes('and') || line.includes('or') || line.includes('not')) {
+                return '🔗 <strong>Logische Operatoren:</strong> Verknüpft oder invertiert Bedingungen.';
+            }
+
+            return null;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function showCourseOverview() {
@@ -1057,11 +1242,284 @@
             loadCourseNavigation();
         }
 
+        // Code Examples for different topics
+        function getCodeExample(partId, moduleId, topicId) {
+            const examples = {
+                'part1_basics': {
+                    'modul_1': {
+                        '1.1': `# Python Installation Test
+print("Hello World!")
+print("Python ist erfolgreich installiert!")
+
+# Version anzeigen
+import sys
+print(f"Python Version: {sys.version}")`,
+                        '1.2': `# Grundlegende Python Syntax
+# Kommentare beginnen mit #
+
+# Variablen erstellen
+name = "Python"
+version = 3.12
+
+# Print mit verschiedenen Datentypen
+print("Sprache:", name)
+print("Version:", version)
+print(f"Willkommen zu {name} {version}!")`
+                    },
+                    'modul_2': {
+                        '2.1': `# Basis-Datentypen in Python
+
+# Integer (Ganzzahlen)
+alter = 25
+anzahl = 100
+
+# Float (Dezimalzahlen)
+preis = 19.99
+temperatur = -5.5
+
+# String (Text)
+name = "Python"
+message = 'Hallo Welt!'
+
+# Boolean (Wahrheitswerte)
+ist_aktiv = True
+ist_fertig = False
+
+# None (Kein Wert)
+ergebnis = None
+
+print(f"Alter: {alter} (Typ: {type(alter)})")
+print(f"Preis: {preis} (Typ: {type(preis)})")
+print(f"Name: {name} (Typ: {type(name)})")
+print(f"Aktiv: {ist_aktiv} (Typ: {type(ist_aktiv)})")`,
+                        '2.2': `# Variablen und Operatoren
+
+# Arithmetische Operatoren
+a = 10
+b = 3
+
+print(f"Addition: {a} + {b} = {a + b}")
+print(f"Subtraktion: {a} - {b} = {a - b}")
+print(f"Multiplikation: {a} * {b} = {a * b}")
+print(f"Division: {a} / {b} = {a / b}")
+print(f"Ganzzahl-Division: {a} // {b} = {a // b}")
+print(f"Modulo: {a} % {b} = {a % b}")
+print(f"Potenz: {a} ** {b} = {a ** b}")
+
+# Vergleichsoperatoren
+print(f"{a} == {b}: {a == b}")
+print(f"{a} != {b}: {a != b}")
+print(f"{a} > {b}: {a > b}")
+print(f"{a} < {b}: {a < b}")
+
+# Logische Operatoren
+x = True
+y = False
+print(f"x and y: {x and y}")
+print(f"x or y: {x or y}")
+print(f"not x: {not x}")`
+                    }
+                }
+            };
+
+            return examples[partId]?.[moduleId]?.[topicId] || `# Beispiel für ${topicId}
+print("Code-Beispiel wird noch erstellt...")`;
+        }
+
+        function getLearningContent(partId, moduleId, topicId) {
+            const content = {
+                'part1_basics': {
+                    'modul_1': {
+                        '1.1': `
+                            <h4 class="font-semibold mb-3">🛠️ Installation und Einrichtung</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-medium">Schritt 1: Python installieren</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li>Gehe zu <a href="https://python.org/downloads" class="text-blue-600">python.org/downloads</a></li>
+                                        <li>Lade die neueste Version herunter</li>
+                                        <li><strong>Wichtig:</strong> "Add Python to PATH" aktivieren</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Schritt 2: IDE einrichten</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li><strong>VS Code:</strong> Kostenlos und anfängerfreundlich</li>
+                                        <li><strong>PyCharm:</strong> Professionelle IDE</li>
+                                        <li>Python Extension installieren</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Schritt 3: Test der Installation</h5>
+                                    <p class="text-sm text-gray-700">Öffne Terminal/CMD und tippe: <code class="bg-gray-200 px-1">python --version</code></p>
+                                </div>
+                            </div>
+                        `,
+                        '1.2': `
+                            <h4 class="font-semibold mb-3">📝 Grundlegende Syntax</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-medium">Python-Philosophie</h5>
+                                    <p class="text-sm text-gray-700">Python folgt dem Prinzip "Readability counts" - Code soll lesbar und verständlich sein.</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Einrückungen</h5>
+                                    <p class="text-sm text-gray-700">Python nutzt Einrückungen statt geschweifte Klammern für Code-Blöcke.</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Kommentare</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li><code class="bg-gray-200 px-1"># Einzeiliger Kommentar</code></li>
+                                        <li><code class="bg-gray-200 px-1">"""Mehrzeiliger Kommentar"""</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `
+                    },
+                    'modul_2': {
+                        '2.1': `
+                            <h4 class="font-semibold mb-3">🔢 Basis-Datentypen</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-medium">Numerische Typen</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li><strong>int:</strong> Ganze Zahlen (42, -17, 0)</li>
+                                        <li><strong>float:</strong> Dezimalzahlen (3.14, -2.5)</li>
+                                        <li><strong>complex:</strong> Komplexe Zahlen (3+4j)</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Text und Wahrheitswerte</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li><strong>str:</strong> Text ("Hello", 'World')</li>
+                                        <li><strong>bool:</strong> True oder False</li>
+                                        <li><strong>None:</strong> Repräsentiert "kein Wert"</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `,
+                        '2.2': `
+                            <h4 class="font-semibold mb-3">🔧 Variablen und Operatoren</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-medium">Variablen erstellen</h5>
+                                    <p class="text-sm text-gray-700">In Python werden Variablen durch einfache Zuweisung erstellt: <code class="bg-gray-200 px-1">name = "Python"</code></p>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium">Arithmetische Operatoren</h5>
+                                    <ul class="list-disc ml-6 text-sm text-gray-700">
+                                        <li><code class="bg-gray-200 px-1">+</code> Addition</li>
+                                        <li><code class="bg-gray-200 px-1">-</code> Subtraktion</li>
+                                        <li><code class="bg-gray-200 px-1">*</code> Multiplikation</li>
+                                        <li><code class="bg-gray-200 px-1">/</code> Division</li>
+                                        <li><code class="bg-gray-200 px-1">//</code> Ganzzahl-Division</li>
+                                        <li><code class="bg-gray-200 px-1">%</code> Modulo (Rest)</li>
+                                        <li><code class="bg-gray-200 px-1">**</code> Potenz</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `
+                    }
+                }
+            };
+
+            return content[partId]?.[moduleId]?.[topicId] || `
+                <h4 class="font-semibold mb-3">📚 Lerninhalte</h4>
+                <p class="text-gray-600">Lerninhalte für dieses Thema werden noch erstellt...</p>
+            `;
+        }
+
+        function showCodeExample(partId, moduleId, topicId) {
+            const code = getCodeExample(partId, moduleId, topicId);
+            const explanations = explainPythonCode(code);
+
+            const content = document.getElementById('taskContent');
+            content.innerHTML += `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">Code Beispiel - ${topicId}</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="flex">
+                            <!-- Code Section -->
+                            <div class="w-1/2 p-4 border-r">
+                                <h4 class="font-semibold mb-2">📄 Code:</h4>
+                                <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm"><code>${code}</code></pre>
+                            </div>
+                            <!-- Explanation Section -->
+                            <div class="w-1/2 p-4">
+                                <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
+                                <div class="space-y-3 text-sm">
+                                    ${explanations}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLearningContent(partId, moduleId, topicId) {
+            const content = getLearningContent(partId, moduleId, topicId);
+
+            const container = document.getElementById('taskContent');
+            container.innerHTML += `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">Lerninhalte - ${topicId}</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            ${content}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showTaskSolution(partId, moduleId, topicId) {
+            // This would load solutions from GitHub or show practice tasks
+            const container = document.getElementById('taskContent');
+            container.innerHTML += `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">Lösung - ${topicId}</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="font-semibold mb-3">🎯 Übungsaufgaben</h4>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
+                                    <h5 class="font-medium">Aufgabe 1:</h5>
+                                    <p class="text-sm text-gray-700">Erstelle ein Python-Skript für ${topicId}</p>
+                                </div>
+                                <div class="bg-gray-100 p-4 rounded">
+                                    <p class="text-sm text-gray-600">💡 <strong>Tipp:</strong> Schaue dir erst das Code-Beispiel an und probiere es selbst aus!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Make functions globally available
         window.loadCoursePart = loadCoursePart;
         window.loadModule = loadModule;
         window.showCourseOverview = showCourseOverview;
         window.showPythonFile = showPythonFile;
+        window.showCodeExample = showCodeExample;
+        window.showLearningContent = showLearningContent;
+        window.showTaskSolution = showTaskSolution;
 
         // Load and display course content
         function loadCourseContent() {
