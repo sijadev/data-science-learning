@@ -683,8 +683,8 @@
             });
         }
 
-        // Navigation functionality
-        function showSection(sectionId, clickedElement) {
+        // Navigation functionality - make it globally available
+        window.showSection = function(sectionId, clickedElement) {
             // Hide all sections
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => {
