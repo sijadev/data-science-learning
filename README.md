@@ -21,6 +21,7 @@ Die Welt der Daten ist spannend, grenzenlos – und eine der gefragtesten Zukunf
 	•	Code & Notebooks (alles frei verfügbar)
 
 ➡️ [[GitHub Repository Link hier einsetzen](https://github.com/sijadev/data-science-learning)]
+➡️ [[GitHub Projektseite Link hier einsetzen](https://sijadev.github.io/data-science-learning/)]
 
 ## Meilensteine:
 
