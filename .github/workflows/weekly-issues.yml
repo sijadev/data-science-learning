@@ -1,0 +1,57 @@
+name: 📅 Weekly Issues Generator
+
+on:
+  schedule:
+    # Jeden Sonntag um 20:00 Uhr (für Montag Vorbereitung)
+    - cron: '0 20 * * 0'
+  workflow_dispatch: # Manuell triggern möglich
+
+jobs:
+  create-weekly-issues:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install PyGithub python-dateutil
+    
+    - name: Calculate Current Week
+      id: week
+      run: |
+        echo "WEEK_NUM=$(python -c "from datetime import datetime, date; start = date(2025, 9, 19); current = date.today(); week = ((current - start).days // 7) + 1; print(min(week, 48))")" >> $GITHUB_ENV
+        echo "START_DATE=$(date -d 'next Monday' +%Y-%m-%d)" >> $GITHUB_ENV
+        echo "END_DATE=$(date -d 'next Sunday' +%Y-%m-%d)" >> $GITHUB_ENV
+    
+    - name: Create Weekly Issues
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python .github/scripts/generate_weekly_issues.py ${{ env.WEEK_NUM }}
+    
+    - name: Post Summary
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const week = ${{ env.WEEK_NUM }};
+          const body = `# 📅 Week ${week} Issues Created\n\n` +
+                      `**Period:** ${{ env.START_DATE }} to ${{ env.END_DATE }}\n\n` +
+                      `✅ Learning goals issue created\n` +
+                      `✅ Project milestone issue created\n` +
+                      `✅ Review issue scheduled\n\n` +
+                      `Good luck with Week ${week}! 🚀`;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🎯 Week ${week} Kickoff`,
+            body: body,
+            labels: ['weekly-planning', 'automated']
+          });

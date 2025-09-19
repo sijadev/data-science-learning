@@ -1,0 +1,92 @@
+name: 🔔 Review Reminder
+
+on:
+  schedule:
+    # Sonntag 10:00 Uhr - Erinnerung für Weekly Review
+    - cron: '0 10 * * 0'
+    # Mittwoch 18:00 Uhr - Mid-Week Check
+    - cron: '0 18 * * 3'
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    - name: Determine Reminder Type
+      id: reminder-type
+      run: |
+        DAY=$(date +%A)
+        if [ "$DAY" = "Sunday" ]; then
+          echo "TYPE=weekly-review" >> $GITHUB_ENV
+          echo "TITLE=🔔 Weekly Review Reminder" >> $GITHUB_ENV
+        else
+          echo "TYPE=mid-week-check" >> $GITHUB_ENV
+          echo "TITLE=⚡ Mid-Week Progress Check" >> $GITHUB_ENV
+        fi
+    
+    - name: Check Open Issues
+      uses: actions/github-script@v6
+      id: check-issues
+      with:
+        script: |
+          const issues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            labels: 'type-learning'
+          });
+          
+          const overdueCount = issues.data.filter(issue => {
+            const created = new Date(issue.created_at);
+            const daysOld = (Date.now() - created) / (1000 * 60 * 60 * 24);
+            return daysOld > 7;
+          }).length;
+          
+          return { overdueCount, totalOpen: issues.data.length };
+    
+    - name: Create Reminder Issue
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const stats = ${{ steps.check-issues.outputs.result }};
+          let body = '';
+          
+          if ('${{ env.TYPE }}' === 'weekly-review') {
+            body = `# 📅 Zeit für dein Weekly Review!\n\n` +
+                  `## 📊 Status\n` +
+                  `- Offene Lernaufgaben: ${stats.totalOpen}\n` +
+                  `- Überfällige Tasks: ${stats.overdueCount}\n\n` +
+                  `## ✅ Review Checklist\n` +
+                  `- [ ] Wochenziele überprüfen\n` +
+                  `- [ ] Zeittracking aktualisieren\n` +
+                  `- [ ] Learnings dokumentieren\n` +
+                  `- [ ] Nächste Woche planen\n` +
+                  `- [ ] Progress Report reviewen\n\n` +
+                  `## 🎯 Fragen zur Reflexion\n` +
+                  `1. Was waren die 3 wichtigsten Learnings?\n` +
+                  `2. Wo hatte ich Schwierigkeiten?\n` +
+                  `3. Was mache ich nächste Woche anders?\n\n` +
+                  `[Weekly Review Template](reports/templates/weekly-review.md)`;
+          } else {
+            body = `# ⚡ Mid-Week Check\n\n` +
+                  `## 📊 Wochenstatus\n` +
+                  `- Offene Tasks: ${stats.totalOpen}\n\n` +
+                  `## 🤔 Quick Check\n` +
+                  `- [ ] Bin ich on track für die Wochenziele?\n` +
+                  `- [ ] Brauche ich Hilfe bei blockierten Tasks?\n` +
+                  `- [ ] Zeitplan anpassen?\n\n` +
+                  `💪 Keep going! Du schaffst das!`;
+          }
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '${{ env.TITLE }}',
+            body: body,
+            labels: ['reminder', 'automated'],
+            assignees: [context.repo.owner]
+          });
