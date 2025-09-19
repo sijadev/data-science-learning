@@ -2,3 +2,7 @@ PyGithub==2.1.1
 matplotlib==3.8.2
 pandas==2.1.4
 python-dateutil
+seaborn 
+pygithub 
+gitpython 
+numpy
