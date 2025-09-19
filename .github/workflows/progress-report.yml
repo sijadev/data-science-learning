@@ -26,13 +26,14 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install pandas matplotlib seaborn PyGithub
-    
+        pip install -r requirements.txt
+
     - name: Collect Metrics
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
-        python .github/scripts/create_progress_report.py
+        python .github/scripts/generate_progress_report.py
     
     - name: Upload Report
       uses: actions/upload-artifact@v3
