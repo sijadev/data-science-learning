@@ -1,0 +1,99 @@
+name: 🏆 Achievement & Challenge Tracker
+
+on:
+  # Trigger bei jedem Push
+  push:
+    branches: [ main ]
+    paths:
+      - '**.py'
+      - '**.ipynb'
+      - 'projects/**'
+  
+  # Tägliche Aktualisierung
+  schedule:
+    - cron: '0 20 * * *'  # Jeden Tag um 20:00 Uhr
+  
+  # Manueller Trigger
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Update type'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - achievements
+          - challenges
+          - statistics
+
+jobs:
+  track-achievements:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Alle History für Statistiken
+      
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 📦 Install Dependencies
+        run: |
+          pip install pandas matplotlib seaborn pygithub gitpython
+      
+      - name: 📊 Collect Repository Statistics
+        id: stats
+        run: |
+          echo "TOTAL_COMMITS=$(git rev-list --all --count)" >> $GITHUB_OUTPUT
+          echo "FILES_COUNT=$(find . -name '*.py' -o -name '*.ipynb' | wc -l)" >> $GITHUB_OUTPUT
+          echo "TOTAL_LINES=$(find . -name '*.py' -exec wc -l {} + | tail -1 | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "CURRENT_WEEK=$(python -c "from datetime import date; start=date(2025,9,19); print(((date.today()-start).days//7)+1)")" >> $GITHUB_OUTPUT
+      
+      - name: 🏅 Update Achievements
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python .github/scripts/update_achievements.py \
+            --commits ${{ steps.stats.outputs.TOTAL_COMMITS }} \
+            --files ${{ steps.stats.outputs.FILES_COUNT }} \
+            --lines ${{ steps.stats.outputs.TOTAL_LINES }} \
+            --week ${{ steps.stats.outputs.CURRENT_WEEK }}
+      
+      - name: 📈 Generate Progress Charts
+        run: |
+          python .github/scripts/generate_charts.py
+      
+      - name: 💾 Commit Updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add challenge/
+          git add assets/charts/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🏆 Update achievements and statistics - Week ${{ steps.stats.outputs.CURRENT_WEEK }}"
+            git push
+          fi
+      
+      - name: 🎉 Create Achievement Issue (if new achievement)
+        if: steps.stats.outputs.NEW_ACHIEVEMENT == 'true'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const achievement = '${{ steps.stats.outputs.ACHIEVEMENT_NAME }}';
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🎉 Achievement Unlocked: ${achievement}`,
+              body: `# 🏆 Congratulations!\n\nYou've unlocked a new achievement:\n\n**${achievement}**\n\nKeep up the great work! 💪\n\n[View all achievements](challenge/details/achievements.md)`,
+              labels: ['achievement', 'celebration']
+            });
