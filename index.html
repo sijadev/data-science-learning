@@ -180,11 +180,11 @@
                 <h1 class="text-2xl font-bold">Data Science Journey</h1>
             </div>
             <div class="flex space-x-6">
-                <a onclick="showSection('overview')" class="nav-link hover:text-purple-200 transition active">Overview</a>
-                <a onclick="showSection('progress')" class="nav-link hover:text-purple-200 transition">Progress</a>
-                <a onclick="showSection('achievements')" class="nav-link hover:text-purple-200 transition">Achievements</a>
-                <a onclick="showSection('projects')" class="nav-link hover:text-purple-200 transition">Projects</a>
-                <a onclick="showSection('course')" class="nav-link hover:text-purple-200 transition">Course</a>
+                <a onclick="showSection('overview', this); return false;" class="nav-link hover:text-purple-200 transition active">Overview</a>
+                <a onclick="showSection('progress', this); return false;" class="nav-link hover:text-purple-200 transition">Progress</a>
+                <a onclick="showSection('achievements', this); return false;" class="nav-link hover:text-purple-200 transition">Achievements</a>
+                <a onclick="showSection('projects', this); return false;" class="nav-link hover:text-purple-200 transition">Projects</a>
+                <a onclick="showSection('course', this); return false;" class="nav-link hover:text-purple-200 transition">Course</a>
                 <a href="https://github.com/sijadev/data-science-learning" target="_blank" class="hover:text-purple-200 transition">
                     <i class="fab fa-github text-xl"></i>
                 </a>
@@ -568,6 +568,12 @@
         // Create activity calendar
         function createActivityCalendar() {
             const calendar = document.getElementById('activityCalendar');
+
+            if (!calendar) {
+                console.error('Activity calendar not found');
+                return;
+            }
+
             const today = new Date();
             
             // Generate 90 days of mock activity
@@ -601,7 +607,12 @@
         // Load achievements
         function loadAchievements() {
             const grid = document.getElementById('achievementGrid');
-            
+
+            if (!grid) {
+                console.error('Achievement grid not found');
+                return;
+            }
+
             journeyData.achievements.forEach(achievement => {
                 const div = document.createElement('div');
                 div.className = `text-center p-4 rounded-lg ${achievement.unlocked ? 'bg-yellow-100' : 'bg-gray-100'}`;
@@ -617,6 +628,11 @@
         // Load projects
         function loadProjects() {
             const grid = document.getElementById('projectsGrid');
+
+            if (!grid) {
+                console.error('Projects grid not found');
+                return;
+            }
             
             journeyData.projects.forEach(project => {
                 const statusColors = {
@@ -651,6 +667,11 @@
         function loadWeeklyGoals() {
             const container = document.getElementById('overviewWeeklyGoals');
 
+            if (!container) {
+                console.error('Weekly goals container not found');
+                return;
+            }
+
             journeyData.weeklyGoals.forEach(goal => {
                 const div = document.createElement('div');
                 div.className = 'flex items-center p-3 rounded hover:bg-gray-50';
@@ -663,7 +684,7 @@
         }
 
         // Navigation functionality
-        function showSection(sectionId) {
+        function showSection(sectionId, clickedElement) {
             // Hide all sections
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => {
@@ -683,7 +704,15 @@
             });
 
             // Add active class to clicked nav link
-            event.target.classList.add('active');
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            } else {
+                // Find the nav link by onclick attribute
+                const activeNavLink = document.querySelector(`[onclick*="'${sectionId}'"]`);
+                if (activeNavLink) {
+                    activeNavLink.classList.add('active');
+                }
+            }
 
             // Load course content if course section is selected
             if (sectionId === 'course') {
@@ -693,6 +722,13 @@
 
         // Load and display course content
         function loadCourseContent() {
+            const contentContainer = document.getElementById('courseContent');
+
+            if (!contentContainer) {
+                console.error('Course content container not found');
+                return;
+            }
+
             const courseContentData = `# Python Overview:
 
 ## 🎯 Teil 1: Python Grundlagen (~3 Wochen / 22 Tage)
@@ -966,7 +1002,6 @@
 
 ---`;
 
-            const contentContainer = document.getElementById('courseContent');
             contentContainer.innerHTML = formatMarkdownContent(courseContentData);
         }
 
