@@ -1698,29 +1698,29 @@
 
                 const content = document.getElementById('taskContent');
                 content.innerHTML += `
-                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">${filename}</h3>
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick="this.remove()">
+                        <div class="bg-white rounded-lg w-full max-w-5xl h-full max-h-[85vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center flex-shrink-0 bg-gray-50 rounded-t-lg">
+                                <h3 class="text-lg font-semibold text-gray-900">${filename}</h3>
                                 <div class="flex space-x-2">
                                     <button onclick="toggleCodeExplanation()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
                                         <i class="fas fa-lightbulb mr-1"></i>Erklärung
                                     </button>
-                                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-times"></i>
+                                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700 p-1 rounded hover:bg-gray-200">
+                                        <i class="fas fa-times text-xl"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex">
+                            <div class="flex flex-1 overflow-hidden">
                                 <!-- Code Section -->
-                                <div class="flex-1 p-4 border-r" style="min-width: 0;">
+                                <div class="flex-1 p-4 border-r overflow-y-auto">
                                     <h4 class="font-semibold mb-2">📄 Code:</h4>
-                                    <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm" style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code>${addLineNumbers(escapeHtml(code), fileId)}</code></pre>
+                                    <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm overflow-x-auto"><code>${addLineNumbers(escapeHtml(code), fileId)}</code></pre>
                                 </div>
                                 <!-- Explanation Section -->
-                                <div class="flex-1 p-4" id="codeExplanationPanel" style="min-width: 0; max-width: 50%;">
+                                <div class="flex-1 p-4 overflow-y-auto" id="codeExplanationPanel">
                                     <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
-                                    <div class="space-y-3 text-sm overflow-y-auto custom-scrollbar" style="max-height: 600px;">
+                                    <div class="space-y-3 text-sm">
                                         ${await explainPythonCode(code, fileId)}
                                     </div>
                                 </div>
