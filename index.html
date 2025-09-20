@@ -3252,8 +3252,23 @@ print("Hallo Welt!")
             const instructionsTitle = lang === 'de' ? 'Aufgabenstellung' : 'Instructions';
 
             try {
-                // Get code template for this topic
-                const codeTemplate = getCodeTemplate(partId, moduleId, topicId);
+                // Try to load exercise template from file first
+                let codeTemplate;
+                try {
+                    const templatePath = `course_content/${partId}/${moduleId}/${topicId}/exercise_template.py`;
+                    const templateResponse = await fetch(templatePath);
+                    if (templateResponse.ok) {
+                        codeTemplate = await templateResponse.text();
+                        console.log('Loaded exercise template from file:', templatePath);
+                    } else {
+                        // Fallback to hardcoded template
+                        codeTemplate = getCodeTemplate(partId, moduleId, topicId);
+                        console.log('Using hardcoded template for:', topicId);
+                    }
+                } catch (error) {
+                    console.log('Failed to load template file, using hardcoded:', error);
+                    codeTemplate = getCodeTemplate(partId, moduleId, topicId);
+                }
                 const codeId = `exercise-${Date.now()}`;
 
                 // Create instructions content
