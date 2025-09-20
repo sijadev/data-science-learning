@@ -513,6 +513,11 @@
 
             // Store preference
             localStorage.setItem('preferredLanguage', lang);
+
+            // Reload current module content if it's displayed
+            if (window.currentPartId && window.currentModuleId) {
+                loadModuleContent(window.currentPartId, window.currentModuleId);
+            }
         }
 
         // Load preferred language on startup
@@ -1472,6 +1477,10 @@
             const part = courseStructure[partId];
             if (!part) return;
 
+            // Clear current module tracking when switching to part view
+            window.currentPartId = null;
+            window.currentModuleId = null;
+
             // Update breadcrumb
             document.getElementById('courseBreadcrumb').innerHTML = `
                 <a href="#" onclick="showCourseOverview()" class="text-purple-600 hover:underline">Course</a>
@@ -1582,6 +1591,10 @@
             document.getElementById('courseOverview').style.display = 'none';
             document.getElementById('moduleContent').style.display = 'none';
             document.getElementById('taskContent').style.display = 'block';
+
+            // Store current module for language switching
+            window.currentPartId = partId;
+            window.currentModuleId = moduleId;
 
             // Load module content
             loadModuleContent(partId, moduleId);
@@ -2271,6 +2284,10 @@
 
 
         function showCourseOverview() {
+            // Clear current module tracking
+            window.currentPartId = null;
+            window.currentModuleId = null;
+
             const lang = getCurrentLanguage();
             const overviewText = lang === 'de' ? 'Kursübersicht' : 'Course Overview';
             document.getElementById('courseBreadcrumb').textContent = overviewText;
