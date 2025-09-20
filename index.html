@@ -2569,49 +2569,132 @@ print("Code-Beispiel wird noch erstellt...")`;
             const explanationTitle = lang === 'de' ? 'Code-Erklärung' : 'Code Explanation';
 
             try {
-                // Load code from file
-                const codePath = `course_content/${partId}/${moduleId}/${topicId}/code.py`;
-                const response = await fetch(codePath);
                 let code;
+                let codeFound = false;
 
-                if (response.ok) {
-                    code = await response.text();
-                } else {
-                    // Fallback to existing function if file doesn't exist
-                    code = getCodeExample(partId, moduleId, topicId);
+                // Try to load code from the new Python course structure first
+                if (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert')) {
+                    // Try to find a matching .py file in the module directory
+                    try {
+                        // First try GitHub API to get list of files
+                        const repoPath = `course/python/${partId}/${moduleId}`;
+                        const apiUrl = `https://api.github.com/repos/sijadev/data-science-learning/contents/${repoPath}`;
+                        const response = await fetch(apiUrl);
+
+                        if (response.ok) {
+                            const files = await response.json();
+                            // Find .py files that could match this topic
+                            const pyFiles = files.filter(file =>
+                                file.name.endsWith('.py') &&
+                                (file.name.includes(topicId.replace('.', '_')) || file.name.startsWith(topicId))
+                            );
+
+                            if (pyFiles.length > 0) {
+                                // Load the first matching .py file
+                                const selectedFile = pyFiles[0];
+                                const fileResponse = await fetch(`https://api.github.com/repos/sijadev/data-science-learning/contents/${repoPath}/${selectedFile.name}`);
+
+                                if (fileResponse.ok) {
+                                    const fileData = await fileResponse.json();
+                                    code = atob(fileData.content);
+                                    codeFound = true;
+                                    console.log('Successfully loaded Python file from GitHub API:', selectedFile.name);
+                                }
+                            }
+                        }
+                    } catch (apiError) {
+                        console.log('GitHub API failed for Python files, trying direct fetch...', apiError);
+
+                        // Fallback: try direct fetch with common naming patterns
+                        const possibleFiles = [
+                            `course/python/${partId}/${moduleId}/${topicId.replace('.', '_')}.py`,
+                            `course/python/${partId}/${moduleId}/${topicId}_example.py`,
+                            `course/python/${partId}/${moduleId}/${moduleId}_${topicId}.py`
+                        ];
+
+                        for (const filePath of possibleFiles) {
+                            try {
+                                const directResponse = await fetch(filePath);
+                                if (directResponse.ok) {
+                                    code = await directResponse.text();
+                                    codeFound = true;
+                                    console.log('Successfully loaded Python file from direct fetch:', filePath);
+                                    break;
+                                }
+                            } catch (directError) {
+                                console.log('Direct fetch failed for:', filePath);
+                            }
+                        }
+                    }
                 }
 
-                const codeId = `code-${Date.now()}`; // Unique ID for this popup
-                const context = { partId, moduleId, topicId };
-                const explanations = await explainPythonCode(code, codeId, context);
-                const content = document.getElementById('taskContent');
+                // If no code found in new structure, try the old course_content structure
+                if (!codeFound) {
+                    const codePath = `course_content/${partId}/${moduleId}/${topicId}/code.py`;
+                    const response = await fetch(codePath);
 
-                content.innerHTML += `
-                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">${codeTitle} - ${topicId}</h3>
-                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex">
-                                <!-- Code Section -->
-                                <div class="flex-1 p-4 border-r" style="min-width: 0;">
-                                    <h4 class="font-semibold mb-2">📄 Code:</h4>
-                                    <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm" style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code>${addLineNumbers(escapeHtml(code), codeId)}</code></pre>
+                    if (response.ok) {
+                        code = await response.text();
+                        codeFound = true;
+                        console.log('Successfully loaded from old course_content structure');
+                    } else {
+                        // Final fallback to existing function
+                        code = getCodeExample(partId, moduleId, topicId);
+                        codeFound = true;
+                        console.log('Using fallback getCodeExample function');
+                    }
+                }
+
+                if (codeFound && code) {
+                    const codeId = `code-${Date.now()}`; // Unique ID for this popup
+                    const context = { partId, moduleId, topicId };
+                    const explanations = await explainPythonCode(code, codeId, context);
+                    const content = document.getElementById('taskContent');
+
+                    content.innerHTML += `
+                        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                            <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                                <div class="p-4 border-b flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold">${codeTitle} - ${topicId}</h3>
+                                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <!-- Explanation Section -->
-                                <div class="flex-1 p-4" style="min-width: 0; max-width: 50%;">
-                                    <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
-                                    <div class="space-y-3 text-sm overflow-y-auto custom-scrollbar" style="max-height: 600px;">
-                                        ${explanations}
+                                <div class="flex">
+                                    <!-- Code Section -->
+                                    <div class="flex-1 p-4 border-r" style="min-width: 0;">
+                                        <h4 class="font-semibold mb-2">📄 Code:</h4>
+                                        <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm" style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code>${addLineNumbers(escapeHtml(code), codeId)}</code></pre>
+                                    </div>
+                                    <!-- Explanation Section -->
+                                    <div class="flex-1 p-4" style="min-width: 0; max-width: 50%;">
+                                        <h4 class="font-semibold mb-2">💡 ${explanationTitle}:</h4>
+                                        <div class="space-y-3 text-sm overflow-y-auto custom-scrollbar" style="max-height: 600px;">
+                                            ${explanations}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    // Show error message if no code found
+                    const content = document.getElementById('taskContent');
+                    const errorMsg = lang === 'de' ? 'Code-Beispiel konnte nicht geladen werden.' : 'Code example could not be loaded.';
+                    content.innerHTML += `
+                        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                            <div class="bg-white rounded-lg max-w-md m-4 p-6" onclick="event.stopPropagation()">
+                                <div class="text-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 text-3xl mb-3"></i>
+                                    <p class="text-gray-700">${errorMsg}</p>
+                                    <button onclick="this.closest('.fixed').remove()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             } catch (error) {
                 console.error('Error loading code example:', error);
             }
