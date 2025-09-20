@@ -2465,6 +2465,85 @@ print("Code-Beispiel wird noch erstellt...")`;
             `;
         }
 
+        // Simple markdown to HTML converter for learning content
+        function convertMarkdownToHTML(markdown) {
+            return markdown
+                // Headers
+                .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-6 mb-3 text-gray-800">$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-8 mb-4 text-gray-900">$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-6 text-gray-900">$1</h1>')
+
+                // Code blocks
+                .replace(/```python\n([\s\S]*?)\n```/g, '<pre class="bg-gray-100 border-l-4 border-blue-500 p-4 my-4 overflow-x-auto"><code class="language-python">$1</code></pre>')
+                .replace(/```bash\n([\s\S]*?)\n```/g, '<pre class="bg-gray-900 text-green-400 p-4 my-4 overflow-x-auto"><code class="language-bash">$1</code></pre>')
+                .replace(/```(.*?)\n([\s\S]*?)\n```/g, '<pre class="bg-gray-100 border-l-4 border-gray-400 p-4 my-4 overflow-x-auto"><code>$2</code></pre>')
+
+                // Inline code
+                .replace(/`([^`]+)`/g, '<code class="bg-gray-200 text-red-600 px-1 py-0.5 rounded text-sm">$1</code>')
+
+                // Bold and italic
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+
+                // Lists - process numbered and bulleted lists
+                .replace(/((?:^\d+\.\s+.*$\n?)+)/gm, (match) => {
+                    const items = match.trim().split('\n').map(line =>
+                        line.replace(/^\d+\.\s+/, '').trim()
+                    ).filter(item => item);
+                    return '<ol class="list-decimal ml-6 my-3">' +
+                           items.map(item => `<li class="mb-1">${item}</li>`).join('') +
+                           '</ol>';
+                })
+                .replace(/((?:^-\s+.*$\n?)+)/gm, (match) => {
+                    const items = match.trim().split('\n').map(line =>
+                        line.replace(/^-\s+/, '').trim()
+                    ).filter(item => item);
+                    return '<ul class="list-disc ml-6 my-3">' +
+                           items.map(item => `<li class="mb-1">${item}</li>`).join('') +
+                           '</ul>';
+                })
+
+                // Links
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank">$1</a>')
+
+                // Tables - convert markdown tables to HTML
+                .replace(/(\|[^|\n]+\|[^|\n]*\n)+/g, (match) => {
+                    const lines = match.trim().split('\n');
+                    let tableHTML = '<table class="min-w-full bg-white border border-gray-300 my-4"><tbody>';
+
+                    lines.forEach((line, index) => {
+                        if (line.includes('|') && !line.match(/^\|[-\s:]+\|/)) { // Skip separator lines
+                            const cells = line.split('|').filter(cell => cell.trim()).map(cell => cell.trim());
+                            const tag = index === 0 ? 'th' : 'td';
+                            const className = index === 0 ? 'border px-3 py-2 bg-gray-100 font-semibold' : 'border px-3 py-2';
+                            tableHTML += '<tr>' + cells.map(cell => `<${tag} class="${className}">${cell}</${tag}>`).join('') + '</tr>';
+                        }
+                    });
+
+                    tableHTML += '</tbody></table>';
+                    return tableHTML;
+                })
+
+                // Paragraphs (must be last)
+                .replace(/\n\n/g, '</p><p class="mb-4">')
+                .replace(/^(.+)$/gm, function(match) {
+                    // Don't wrap if it's already HTML or empty line
+                    if (match.match(/^<[^>]+>/) || match.trim() === '') {
+                        return match;
+                    }
+                    return match;
+                })
+
+                // Wrap content in paragraph tags
+                .replace(/^([^<\n].*)$/gm, '<p class="mb-4">$1</p>')
+
+                // Clean up empty paragraphs
+                .replace(/<p class="mb-4"><\/p>/g, '')
+
+                // Horizontal rules
+                .replace(/^---$/gm, '<hr class="my-6 border-gray-300">');
+        }
+
         async function showCodeExample(partId, moduleId, topicId) {
             const lang = getCurrentLanguage();
             const codeTitle = lang === 'de' ? 'Code Beispiel' : 'Code Example';
@@ -2524,36 +2603,95 @@ print("Code-Beispiel wird noch erstellt...")`;
             const title = lang === 'de' ? 'Lerninhalte' : 'Learning Content';
 
             try {
-                // Load learning content from file
-                const contentPath = `course_content/${partId}/${moduleId}/${topicId}/learning_${lang}.html`;
-                const response = await fetch(contentPath);
                 let content;
+                let contentFound = false;
 
-                if (response.ok) {
-                    content = await response.text();
-                } else {
-                    // Fallback to existing function if file doesn't exist
-                    content = getLearningContent(partId, moduleId, topicId);
+                // Try to load markdown content from the new Python course structure
+                if (partId.includes('python')) {
+                    const markdownFileName = lang === 'de' ? 'learning_content.md' : 'learning_content_en.md';
+                    const contentPath = `course/python/${partId}/${moduleId}/${markdownFileName}`;
+
+                    try {
+                        // Try to load from GitHub API first
+                        const apiUrl = `https://api.github.com/repos/sijadev/data-science-learning/contents/${contentPath}`;
+                        const response = await fetch(apiUrl);
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const markdownContent = atob(data.content);
+                            // Convert markdown to HTML (basic conversion)
+                            content = convertMarkdownToHTML(markdownContent);
+                            contentFound = true;
+                        }
+                    } catch (apiError) {
+                        console.log('GitHub API failed, trying direct fetch...');
+
+                        // Fallback to direct fetch
+                        try {
+                            const directResponse = await fetch(contentPath);
+                            if (directResponse.ok) {
+                                const markdownContent = await directResponse.text();
+                                content = convertMarkdownToHTML(markdownContent);
+                                contentFound = true;
+                            }
+                        } catch (directError) {
+                            console.log('Direct fetch also failed');
+                        }
+                    }
                 }
 
+                // If no content found, try the old course_content structure
+                if (!contentFound) {
+                    const contentPath = `course_content/${partId}/${moduleId}/${topicId}/learning_${lang}.html`;
+                    const response = await fetch(contentPath);
+
+                    if (response.ok) {
+                        content = await response.text();
+                        contentFound = true;
+                    } else {
+                        // Final fallback to existing function
+                        content = getLearningContent(partId, moduleId, topicId);
+                        contentFound = true;
+                    }
+                }
+
+                if (contentFound) {
+                    const container = document.getElementById('taskContent');
+                    container.innerHTML += `
+                        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                            <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                                <div class="p-4 border-b flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold">${title} - ${moduleId}</h3>
+                                    <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="p-6 prose prose-lg max-w-none">
+                                    ${content}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('No learning content found');
+                }
+            } catch (error) {
+                console.error('Error loading learning content:', error);
                 const container = document.getElementById('taskContent');
+                const errorMsg = lang === 'de' ? 'Lerninhalte konnten nicht geladen werden.' : 'Learning content could not be loaded.';
                 container.innerHTML += `
                     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">${title} - ${topicId}</h3>
-                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times"></i>
+                        <div class="bg-white rounded-lg max-w-md m-4 p-6" onclick="event.stopPropagation()">
+                            <div class="text-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 text-3xl mb-3"></i>
+                                <p class="text-gray-700">${errorMsg}</p>
+                                <button onclick="this.closest('.fixed').remove()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    OK
                                 </button>
-                            </div>
-                            <div class="p-6">
-                                ${content}
                             </div>
                         </div>
                     </div>
                 `;
-            } catch (error) {
-                console.error('Error loading learning content:', error);
             }
         }
 
