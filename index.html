@@ -1606,12 +1606,8 @@
             const lang = getCurrentLanguage();
 
             let html = `
-                <div class="flex justify-between items-center mb-6">
+                <div class="mb-6">
                     <h2 class="text-2xl font-bold">${getLocalizedText(module.name)}</h2>
-                    <button onclick="showLearningContent('${partId}', '${moduleId}')"
-                            class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center shadow-md">
-                        <i class="fas fa-book mr-2"></i>${lang === 'de' ? 'Lerninhalte' : 'Learning Content'}
-                    </button>
                 </div>
                 <div class="space-y-6">
             `;
@@ -1625,7 +1621,13 @@
 
                 html += `
                     <div class="border rounded-lg p-6">
-                        <h3 class="text-xl font-semibold mb-3">${topicId} ${getLocalizedText(topic.name)}</h3>
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-semibold">${topicId} ${getLocalizedText(topic.name)}</h3>
+                            <button onclick="showLearningContent('${partId}', '${moduleId}', '${topicId}')"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center shadow-md">
+                                <i class="fas fa-book mr-2"></i>${lang === 'de' ? 'Lerninhalte' : 'Learning Content'}
+                            </button>
+                        </div>
                         <p class="text-gray-600 mb-4">${durationLabel}: ${getLocalizedText(topic.duration)}</p>
 
                         <div class="bg-gray-50 p-4 rounded-lg">
@@ -2572,8 +2574,42 @@ print("Code-Beispiel wird noch erstellt...")`;
                 let code;
                 let codeFound = false;
 
-                // Try to load code from the new Python course structure first
+                // First try to load specific code file from course/python structure (dedicated for .py files)
                 if (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert')) {
+                    const specificCodePath = `course/python/${partId}/${moduleId}/${topicId}_code.py`;
+                    console.log('Trying specific code file in course/python:', specificCodePath);
+
+                    try {
+                        const response = await fetch(specificCodePath);
+                        if (response.ok) {
+                            code = await response.text();
+                            codeFound = true;
+                            console.log('Successfully loaded specific code file from course/python');
+                        }
+                    } catch (error) {
+                        console.log('Specific code file fetch error:', error);
+                    }
+                }
+
+                // If not found, try course_content structure (fallback)
+                if (!codeFound) {
+                    const codePath = `course_content/${partId}/${moduleId}/${topicId}/code.py`;
+                    console.log('Trying course_content structure as fallback:', codePath);
+
+                    try {
+                        const response = await fetch(codePath);
+                        if (response.ok) {
+                            code = await response.text();
+                            codeFound = true;
+                            console.log('Successfully loaded from course_content fallback');
+                        }
+                    } catch (error) {
+                        console.log('course_content fetch error:', error);
+                    }
+                }
+
+                // If still not found, try to find any matching .py file in the course/python module directory
+                if (!codeFound && (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert'))) {
                     // Try to find a matching .py file in the module directory
                     try {
                         // First try GitHub API to get list of files
@@ -2628,21 +2664,11 @@ print("Code-Beispiel wird noch erstellt...")`;
                     }
                 }
 
-                // If no code found in new structure, try the old course_content structure
+                // Final fallback to existing function
                 if (!codeFound) {
-                    const codePath = `course_content/${partId}/${moduleId}/${topicId}/code.py`;
-                    const response = await fetch(codePath);
-
-                    if (response.ok) {
-                        code = await response.text();
-                        codeFound = true;
-                        console.log('Successfully loaded from old course_content structure');
-                    } else {
-                        // Final fallback to existing function
-                        code = getCodeExample(partId, moduleId, topicId);
-                        codeFound = true;
-                        console.log('Using fallback getCodeExample function');
-                    }
+                    code = getCodeExample(partId, moduleId, topicId);
+                    codeFound = true;
+                    console.log('Using fallback getCodeExample function');
                 }
 
                 if (codeFound && code) {
@@ -2710,12 +2736,34 @@ print("Code-Beispiel wird noch erstellt...")`;
                 let content;
                 let contentFound = false;
 
-                // Try to load markdown content from the new Python course structure
+                // First try to load from course_content structure (for .md and .json files)
                 if (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert')) {
+                    const markdownFileName = lang === 'de' ? 'learning_content.md' : 'learning_content_en.md';
+                    const contentPath = `course_content/${partId}/${moduleId}/${topicId}/${markdownFileName}`;
+
+                    console.log('Trying course_content structure first:', contentPath);
+
+                    try {
+                        const response = await fetch(contentPath);
+                        if (response.ok) {
+                            const markdownContent = await response.text();
+                            content = convertMarkdownToHTML(markdownContent);
+                            contentFound = true;
+                            console.log('Successfully loaded from course_content structure');
+                        } else {
+                            console.log('course_content fetch failed:', response.status);
+                        }
+                    } catch (error) {
+                        console.log('course_content fetch error:', error);
+                    }
+                }
+
+                // Fallback: try old course/python structure (should only contain .py files, but kept for compatibility)
+                if (!contentFound && (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert'))) {
                     const markdownFileName = lang === 'de' ? 'learning_content.md' : 'learning_content_en.md';
                     const contentPath = `course/python/${partId}/${moduleId}/${markdownFileName}`;
 
-                    console.log('Trying to load:', contentPath);
+                    console.log('Trying old course/python structure as fallback:', contentPath);
 
                     try {
                         // Try to load from GitHub API first
@@ -2725,10 +2773,9 @@ print("Code-Beispiel wird noch erstellt...")`;
                         if (response.ok) {
                             const data = await response.json();
                             const markdownContent = atob(data.content);
-                            // Convert markdown to HTML (basic conversion)
                             content = convertMarkdownToHTML(markdownContent);
                             contentFound = true;
-                            console.log('Successfully loaded from GitHub API, content length:', content.length);
+                            console.log('Successfully loaded from GitHub API fallback, content length:', content.length);
                         } else {
                             console.log('GitHub API response not ok:', response.status, response.statusText);
                         }
@@ -2742,7 +2789,7 @@ print("Code-Beispiel wird noch erstellt...")`;
                                 const markdownContent = await directResponse.text();
                                 content = convertMarkdownToHTML(markdownContent);
                                 contentFound = true;
-                                console.log('Successfully loaded from direct fetch, content length:', content.length);
+                                console.log('Successfully loaded from direct fetch fallback, content length:', content.length);
                             } else {
                                 console.log('Direct fetch response not ok:', directResponse.status, directResponse.statusText);
                             }
@@ -2752,19 +2799,11 @@ print("Code-Beispiel wird noch erstellt...")`;
                     }
                 }
 
-                // If no content found, try the old course_content structure
+                // Final fallback to hardcoded function
                 if (!contentFound) {
-                    const contentPath = `course_content/${partId}/${moduleId}/${topicId}/learning_${lang}.html`;
-                    const response = await fetch(contentPath);
-
-                    if (response.ok) {
-                        content = await response.text();
-                        contentFound = true;
-                    } else {
-                        // Final fallback to existing function
-                        content = getLearningContent(partId, moduleId, topicId);
-                        contentFound = true;
-                    }
+                    content = getLearningContent(partId, moduleId, topicId);
+                    contentFound = true;
+                    console.log('Using hardcoded fallback content');
                 }
 
                 if (contentFound) {
@@ -3255,15 +3294,24 @@ print("Hallo Welt!")
                 // Try to load exercise template from file first
                 let codeTemplate;
                 try {
-                    const templatePath = `course_content/${partId}/${moduleId}/${topicId}/exercise_template.py`;
+                    // First try course/python structure (for .py files)
+                    const templatePath = `course/python/${partId}/${moduleId}/${topicId}_exercise.py`;
                     const templateResponse = await fetch(templatePath);
                     if (templateResponse.ok) {
                         codeTemplate = await templateResponse.text();
-                        console.log('Loaded exercise template from file:', templatePath);
+                        console.log('Loaded exercise template from course/python:', templatePath);
                     } else {
-                        // Fallback to hardcoded template
-                        codeTemplate = getCodeTemplate(partId, moduleId, topicId);
-                        console.log('Using hardcoded template for:', topicId);
+                        // Fallback to old course_content structure
+                        const fallbackPath = `course_content/${partId}/${moduleId}/${topicId}/exercise_template.py`;
+                        const fallbackResponse = await fetch(fallbackPath);
+                        if (fallbackResponse.ok) {
+                            codeTemplate = await fallbackResponse.text();
+                            console.log('Loaded exercise template from course_content fallback:', fallbackPath);
+                        } else {
+                            // Final fallback to hardcoded template
+                            codeTemplate = getCodeTemplate(partId, moduleId, topicId);
+                            console.log('Using hardcoded template for:', topicId);
+                        }
                     }
                 } catch (error) {
                     console.log('Failed to load template file, using hardcoded:', error);
