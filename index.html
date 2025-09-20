@@ -345,123 +345,129 @@
         }
 
 
-        /* Enhanced tooltip for explanation items */
+        /* Collapsible detail sections */
         .explanation-item {
             position: relative;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .explanation-item .tooltip-content {
-            visibility: hidden;
+        .explanation-item .detail-content {
+            max-height: 0;
+            overflow: hidden;
             opacity: 0;
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 450px;
-            max-width: 95vw;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            line-height: 1.6;
-            z-index: 10000;
-            border: 1px solid rgba(124, 58, 237, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
-                        0 8px 32px rgba(124, 58, 237, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            transition: opacity 0.3s, visibility 0.3s;
-            pointer-events: none;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 8px;
+            margin-top: 8px;
+            transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            padding: 0 12px;
+            width: 100%;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
-        .explanation-item .tooltip-content::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-        }
-
-        .explanation-item:hover .tooltip-content {
-            visibility: visible;
+        .explanation-item.expanded .detail-content,
+        .explanation-item:hover .detail-content {
+            max-height: 400px;
             opacity: 1;
+            padding: 12px;
         }
 
-        .explanation-item .tooltip-content .tooltip-header {
+        .explanation-item .detail-content .detail-header {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
             border-bottom: 1px solid rgba(124, 58, 237, 0.3);
         }
 
-        .explanation-item .tooltip-content .tooltip-emoji {
-            font-size: 16px;
-            margin-right: 8px;
-        }
-
-        .explanation-item .tooltip-content .tooltip-title {
-            font-weight: 600;
-            color: #e2e8f0;
+        .explanation-item .detail-content .detail-emoji {
             font-size: 14px;
+            margin-right: 6px;
         }
 
-        .explanation-item .tooltip-content .tooltip-section {
-            margin: 8px 0;
+        .explanation-item .detail-content .detail-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 13px;
         }
 
-        .explanation-item .tooltip-content .tooltip-label {
-            font-size: 11px;
-            color: #94a3b8;
+        .explanation-item .detail-content .detail-section {
+            margin: 6px 0;
+            font-size: 12px;
+        }
+
+        .explanation-item .detail-content .detail-label {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 2px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .explanation-item .detail-content .detail-value {
+            color: #374151;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .explanation-item .detail-content .best-practices {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+            padding: 6px;
+            margin-top: 8px;
+        }
+
+        .explanation-item .detail-content .best-practices .label {
+            color: #059669;
+            font-size: 10px;
             font-weight: 600;
             margin-bottom: 4px;
             display: block;
+            text-transform: uppercase;
         }
 
-        .explanation-item .tooltip-content .tooltip-value {
-            color: #cbd5e1;
-            margin-bottom: 8px;
-        }
-
-        .explanation-item .tooltip-content .best-practices {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            margin-top: 10px;
-        }
-
-        .explanation-item .tooltip-content .best-practices .label {
-            color: #34d399;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .explanation-item .tooltip-content .best-practices ul {
+        .explanation-item .detail-content .best-practices ul {
             margin: 0;
             padding-left: 0;
             list-style: none;
+            font-size: 11px;
         }
 
-        .explanation-item .tooltip-content .best-practices li {
-            color: #a7f3d0;
-            margin: 4px 0;
+        .explanation-item .detail-content .best-practices li {
+            color: #047857;
+            margin: 2px 0;
             position: relative;
-            padding-left: 12px;
+            padding-left: 10px;
+            line-height: 1.3;
         }
 
-        .explanation-item .tooltip-content .best-practices li::before {
+        .explanation-item .detail-content .best-practices li::before {
             content: "•";
-            color: #34d399;
+            color: #059669;
             position: absolute;
             left: 0;
+        }
+
+        /* Expand indicator */
+        .explanation-item::after {
+            content: "▼";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 10px;
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+
+        .explanation-item.expanded::after,
+        .explanation-item:hover::after {
+            transform: translateY(-50%) rotate(0deg);
         }
 
         .explanation-item .font-mono {
@@ -1765,12 +1771,17 @@
             return null;
         }
 
-        function createDetailedTooltipContent(explanationData, codeLine, lineNumber) {
+        // Toggle function for collapsible details
+        function toggleExplanationDetails(element) {
+            element.classList.toggle('expanded');
+        }
+
+        function createDetailedContent(explanationData, codeLine, lineNumber) {
             const lang = getCurrentLanguage();
 
             // If we have structured data from JSON files, use that
             if (explanationData.emoji && explanationData.title) {
-                return createStructuredTooltipContent(explanationData, lang);
+                return createStructuredDetailContent(explanationData, lang);
             }
 
             // Fallback: Parse the old format
@@ -1808,9 +1819,58 @@
                 }
             }
 
-            return createStructuredTooltipContent({
+            return createStructuredDetailContent({
                 emoji, title, dataType, syntax, usage, bestPractices
             }, lang);
+        }
+
+        function createStructuredDetailContent(data, lang) {
+            let detailContent = `
+                <div class="detail-header">
+                    <span class="detail-emoji">${data.emoji}</span>
+                    <span class="detail-title">${data.title}</span>
+                </div>
+            `;
+
+            if (data.dataType) {
+                detailContent += `
+                    <div class="detail-section">
+                        <span class="detail-label">${lang === 'de' ? '📊 Datentyp' : '📊 Data Type'}</span>
+                        <div class="detail-value">${data.dataType}</div>
+                    </div>
+                `;
+            }
+
+            if (data.syntax) {
+                detailContent += `
+                    <div class="detail-section">
+                        <span class="detail-label">${lang === 'de' ? '🎯 Syntax' : '🎯 Syntax'}</span>
+                        <div class="detail-value"><code>${data.syntax}</code></div>
+                    </div>
+                `;
+            }
+
+            if (data.usage) {
+                detailContent += `
+                    <div class="detail-section">
+                        <span class="detail-label">${lang === 'de' ? '🔧 Verwendung' : '🔧 Usage'}</span>
+                        <div class="detail-value">${data.usage}</div>
+                    </div>
+                `;
+            }
+
+            if (data.bestPractices && data.bestPractices.length > 0) {
+                detailContent += `
+                    <div class="best-practices">
+                        <span class="label">${lang === 'de' ? '✨ Best Practice 2025' : '✨ Best Practice 2025'}</span>
+                        <ul>
+                            ${data.bestPractices.map(practice => `<li>${practice}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            return detailContent;
         }
 
         function createStructuredTooltipContent(data, lang) {
@@ -1908,12 +1968,12 @@
 
                     explanations += `
                         <div class="explanation-item border-l-4 border-blue-500 pl-3 py-2 bg-blue-50"
+                             onclick="toggleExplanationDetails(this)"
                              onmouseover="highlightCodeLine('${idPrefix}-${lineNumber}')"
                              onmouseout="unhighlightCodeLine('${idPrefix}-${lineNumber}')">
                             <div class="font-mono text-xs text-gray-600">Zeile ${lineNumber}:</div>
                             <div class="font-mono text-sm text-gray-800 mb-1">${escapeHtml(trimmedLine)}</div>
-                            <div class="text-gray-700">${simpleText}</div>
-                            <div class="tooltip-content">${createDetailedTooltipContent(explanationData, line, lineNumber)}</div>
+                            <div class="detail-content">${createDetailedContent(explanationData, line, lineNumber)}</div>
                         </div>
                     `;
                 }
