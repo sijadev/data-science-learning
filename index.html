@@ -2807,35 +2807,485 @@ print("Code-Beispiel wird noch erstellt...")`;
             }
         }
 
+        // Code Templates for Exercises
+        function getCodeTemplate(partId, moduleId, topicId) {
+            const templates = {
+                'part1_basics': {
+                    'modul_1': {
+                        '1.1': `# Python Installation und Grundlagen
+# Übung: Erste Schritte mit Python
+
+# TODO: Erstelle dein erstes Python-Programm
+print("Hallo Welt!")
+
+# TODO: Führe grundlegende Berechnungen durch
+x = 10
+y = 5
+summe = x + y
+print(f"Die Summe von {x} und {y} ist: {summe}")
+
+# TODO: Experimentiere mit verschiedenen Datentypen
+mein_name = "Dein Name hier"
+mein_alter = 25
+print(f"Ich bin {mein_name} und {mein_alter} Jahre alt")
+
+# TODO: Importiere ein Modul und verwende es
+import datetime
+heute = datetime.date.today()
+print(f"Heute ist: {heute}")`,
+
+                        '1.2': `# Python Grundsyntax
+# Übung: Syntax und Formatierung
+
+# TODO: Schreibe Kommentare für deinen Code
+# Dies ist ein einzeiliger Kommentar
+
+"""
+Dies ist ein
+mehrzeiliger Kommentar
+"""
+
+# TODO: Verwende korrekte Einrückung
+if True:
+    print("Korrekte Einrückung!")
+    if True:
+        print("Verschachtelte Einrückung!")
+
+# TODO: Befolge PEP 8 Namenskonventionen
+variable_name = "snake_case für Variablen"
+KONSTANTE = "GROSSBUCHSTABEN für Konstanten"
+
+def meine_funktion():
+    """Docstring für Funktionen"""
+    pass
+
+# TODO: Experimentiere mit Python-Zen
+import this`
+                    },
+                    'modul_2': {
+                        '2.1': `# Datentypen
+# Übung: Arbeiten mit verschiedenen Datentypen
+
+# TODO: Erstelle Variablen mit verschiedenen Datentypen
+ganze_zahl = 42
+komma_zahl = 3.14
+text = "Python ist toll!"
+wahrheitswert = True
+
+# TODO: Konvertiere zwischen Datentypen
+zahl_als_text = str(ganze_zahl)
+text_als_zahl = int("100")
+print(f"Konvertierung: {type(zahl_als_text)}, {type(text_als_zahl)}")
+
+# TODO: Arbeite mit komplexen Zahlen
+komplex = 3 + 4j
+print(f"Komplexe Zahl: {komplex}")
+print(f"Realteil: {komplex.real}, Imaginärteil: {komplex.imag}")
+
+# TODO: Teste truthy und falsy Werte
+falsy_werte = [None, False, 0, 0.0, "", [], {}, set()]
+for wert in falsy_werte:
+    if not wert:
+        print(f"{wert} ist falsy")`,
+
+                        '2.2': `# Variablen und Operatoren
+# Übung: Rechnen und Vergleichen
+
+# TODO: Grundrechenarten
+a = 15
+b = 4
+
+print(f"Addition: {a} + {b} = {a + b}")
+print(f"Subtraktion: {a} - {b} = {a - b}")
+print(f"Multiplikation: {a} * {b} = {a * b}")
+print(f"Division: {a} / {b} = {a / b}")
+print(f"Ganzzahl-Division: {a} // {b} = {a // b}")
+print(f"Modulo: {a} % {b} = {a % b}")
+print(f"Potenz: {a} ** {b} = {a ** b}")
+
+# TODO: Vergleichsoperatoren
+x, y = 10, 20
+print(f"{x} == {y}: {x == y}")
+print(f"{x} < {y}: {x < y}")
+print(f"{x} >= {y}: {x >= y}")
+
+# TODO: Logische Operatoren
+print(f"True and False: {True and False}")
+print(f"True or False: {True or False}")
+print(f"not True: {not True}")
+
+# TODO: Zuweisungsoperatoren
+zähler = 0
+zähler += 5
+print(f"Nach += 5: {zähler}")
+zähler *= 2
+print(f"Nach *= 2: {zähler}")`
+                    },
+                    'modul_3': {
+                        '3.1': `# Bedingte Anweisungen
+# Übung: if, elif, else
+
+# TODO: Einfache if-Anweisung
+alter = 18
+if alter >= 18:
+    print("Du bist volljährig!")
+
+# TODO: if-elif-else Kette
+note = 85
+if note >= 90:
+    print("Ausgezeichnet!")
+elif note >= 80:
+    print("Sehr gut!")
+elif note >= 70:
+    print("Gut!")
+else:
+    print("Kann verbessert werden")
+
+# TODO: Ternärer Operator
+status = "aktiv" if alter >= 18 else "inaktiv"
+print(f"Status: {status}")
+
+# TODO: Verschachtelte Bedingungen
+wetter = "sonnig"
+temperatur = 25
+
+if wetter == "sonnig":
+    if temperatur > 20:
+        print("Perfektes Wetter für draußen!")
+    else:
+        print("Sonnig aber kühl")
+
+# TODO: match-case (Python 3.10+)
+tag = "montag"
+match tag:
+    case "montag":
+        print("Wochenstart!")
+    case "freitag":
+        print("Fast Wochenende!")
+    case _:
+        print("Ein normaler Tag")`,
+
+                        '3.2': `# Schleifen
+# Übung: for und while Loops
+
+# TODO: for-Schleife mit range
+print("Zahlen von 1 bis 5:")
+for i in range(1, 6):
+    print(i)
+
+# TODO: for-Schleife mit Liste
+früchte = ["Apfel", "Banane", "Kirsche"]
+for frucht in früchte:
+    print(f"Ich mag {frucht}")
+
+# TODO: enumerate für Index und Wert
+for index, frucht in enumerate(früchte, 1):
+    print(f"{index}. {frucht}")
+
+# TODO: while-Schleife
+zähler = 0
+while zähler < 3:
+    print(f"Zähler: {zähler}")
+    zähler += 1
+
+# TODO: List Comprehension
+quadrate = [x**2 for x in range(5)]
+print(f"Quadrate: {quadrate}")
+
+gerade_zahlen = [x for x in range(10) if x % 2 == 0]
+print(f"Gerade Zahlen: {gerade_zahlen}")
+
+# TODO: break und continue
+for i in range(10):
+    if i == 3:
+        continue  # Überspringe 3
+    if i == 7:
+        break     # Stoppe bei 7
+    print(i)`
+                    },
+                    'modul_4': {
+                        '4.1': `# Listen
+# Übung: Listen erstellen und manipulieren
+
+# TODO: Listen erstellen
+meine_liste = [1, 2, 3, 4, 5]
+gemischte_liste = [1, "Text", 3.14, True]
+
+# TODO: Elemente hinzufügen
+meine_liste.append(6)
+meine_liste.extend([7, 8, 9])
+meine_liste.insert(0, 0)
+print(f"Nach Hinzufügungen: {meine_liste}")
+
+# TODO: Elemente entfernen
+meine_liste.remove(0)  # Entfernt ersten Wert 0
+letztes = meine_liste.pop()  # Entfernt und gibt letztes Element zurück
+print(f"Entferntes Element: {letztes}")
+print(f"Nach Entfernungen: {meine_liste}")
+
+# TODO: Listen durchsuchen und sortieren
+zahlen = [3, 1, 4, 1, 5, 9, 2, 6]
+print(f"Index von 4: {zahlen.index(4)}")
+print(f"Anzahl von 1: {zahlen.count(1)}")
+
+zahlen.sort()
+print(f"Sortiert: {zahlen}")
+
+# TODO: Slicing
+print(f"Erste 3 Elemente: {zahlen[:3]}")
+print(f"Letzte 3 Elemente: {zahlen[-3:]}")
+print(f"Jedes zweite Element: {zahlen[::2]}")`,
+
+                        '4.2': `# Tupel
+# Übung: Unveränderliche Sequenzen
+
+# TODO: Tupel erstellen
+koordinaten = (10, 20)
+einzelnes_tupel = (42,)  # Komma wichtig!
+person = ("Alice", 30, "Berlin")
+
+# TODO: Tupel unpacking
+x, y = koordinaten
+name, alter, stadt = person
+print(f"Position: x={x}, y={y}")
+print(f"Person: {name}, {alter} Jahre, aus {stadt}")
+
+# TODO: Extended unpacking
+zahlen = (1, 2, 3, 4, 5, 6)
+erste, *mittlere, letzte = zahlen
+print(f"Erste: {erste}, Mittlere: {mittlere}, Letzte: {letzte}")
+
+# TODO: Named Tuples
+from collections import namedtuple
+Punkt = namedtuple('Punkt', ['x', 'y'])
+p1 = Punkt(10, 20)
+print(f"Punkt: x={p1.x}, y={p1.y}")
+
+# TODO: Tupel als Dictionary Keys
+positionen = {
+    (0, 0): "Start",
+    (10, 10): "Ziel",
+    (5, 5): "Checkpoint"
+}
+print(f"Position (5,5): {positionen[(5, 5)]}")`,
+
+                        '4.3': `# Dictionaries
+# Übung: Schlüssel-Wert Paare
+
+# TODO: Dictionary erstellen
+person = {
+    "name": "Alice",
+    "alter": 30,
+    "stadt": "Berlin",
+    "beruf": "Entwicklerin"
+}
+
+# TODO: Zugriff und Manipulation
+print(f"Name: {person['name']}")
+print(f"Alter: {person.get('alter', 'Unbekannt')}")
+
+person["alter"] = 31  # Ändern
+person["email"] = "alice@example.com"  # Hinzufügen
+print(f"Aktualisiert: {person}")
+
+# TODO: Dictionary Methoden
+print(f"Schlüssel: {list(person.keys())}")
+print(f"Werte: {list(person.values())}")
+print(f"Paare: {list(person.items())}")
+
+# TODO: Dictionary Comprehension
+quadrate = {x: x**2 for x in range(1, 6)}
+print(f"Quadrate: {quadrate}")
+
+# TODO: Verschachtelte Dictionaries
+adressbuch = {
+    "Alice": {"telefon": "123", "email": "alice@test.de"},
+    "Bob": {"telefon": "456", "email": "bob@test.de"}
+}
+print(f"Alice's Email: {adressbuch['Alice']['email']}")`,
+
+                        '4.4': `# Sets
+# Übung: Eindeutige Sammlungen
+
+# TODO: Sets erstellen
+zahlen = {1, 2, 3, 4, 5}
+duplikate = [1, 2, 2, 3, 3, 3, 4, 5]
+eindeutig = set(duplikate)
+print(f"Ohne Duplikate: {eindeutig}")
+
+# TODO: Set Operationen
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+print(f"Vereinigung: {a | b}")
+print(f"Schnittmenge: {a & b}")
+print(f"Differenz: {a - b}")
+print(f"Symmetrische Differenz: {a ^ b}")
+
+# TODO: Set Methoden
+farben = {"rot", "grün", "blau"}
+farben.add("gelb")
+farben.update(["orange", "lila"])
+print(f"Farben: {farben}")
+
+# TODO: Membership tests
+print(f"'rot' in farben: {'rot' in farben}")
+print(f"'schwarz' in farben: {'schwarz' in farben}")
+
+# TODO: Set Comprehension
+gerade_quadrate = {x**2 for x in range(10) if x % 2 == 0}
+print(f"Gerade Quadrate: {gerade_quadrate}")`
+                    },
+                    'modul_5': {
+                        '5.1': `# Funktionen
+# Übung: Funktionen definieren und verwenden
+
+# TODO: Einfache Funktion
+def begrüßung(name):
+    """Begrüßt eine Person"""
+    return f"Hallo, {name}!"
+
+print(begrüßung("Alice"))
+
+# TODO: Funktion mit mehreren Parametern
+def berechne_rechteck(länge, breite):
+    """Berechnet Fläche und Umfang eines Rechtecks"""
+    fläche = länge * breite
+    umfang = 2 * (länge + breite)
+    return fläche, umfang
+
+f, u = berechne_rechteck(5, 3)
+print(f"Fläche: {f}, Umfang: {u}")
+
+# TODO: Default Parameter
+def potenz(basis, exponent=2):
+    """Berechnet Potenz mit Default-Exponent 2"""
+    return basis ** exponent
+
+print(f"3^2 = {potenz(3)}")
+print(f"3^3 = {potenz(3, 3)}")
+
+# TODO: *args und **kwargs
+def flexible_funktion(*args, **kwargs):
+    """Flexibel Parameter"""
+    print(f"Args: {args}")
+    print(f"Kwargs: {kwargs}")
+
+flexible_funktion(1, 2, 3, name="Alice", alter=30)
+
+# TODO: Type Hints
+def addiere(a: int, b: int) -> int:
+    """Addiert zwei Zahlen mit Type Hints"""
+    return a + b
+
+print(f"2 + 3 = {addiere(2, 3)}")`,
+
+                        '5.2': `# Scope und Namespaces
+# Übung: Variable Sichtbarkeit
+
+# TODO: Global vs Local
+globale_variable = "Ich bin global"
+
+def lokale_funktion():
+    lokale_variable = "Ich bin lokal"
+    print(f"In Funktion: {lokale_variable}")
+    print(f"Global zugänglich: {globale_variable}")
+
+lokale_funktion()
+print(f"Außerhalb: {globale_variable}")
+
+# TODO: Global Keyword
+zähler = 0
+
+def erhöhe_zähler():
+    global zähler
+    zähler += 1
+    print(f"Zähler: {zähler}")
+
+erhöhe_zähler()
+erhöhe_zähler()
+
+# TODO: Closures
+def erstelle_multiplikator(faktor):
+    def multiplikator(zahl):
+        return zahl * faktor
+    return multiplikator
+
+verdoppeln = erstelle_multiplikator(2)
+verdreifachen = erstelle_multiplikator(3)
+
+print(f"5 * 2 = {verdoppeln(5)}")
+print(f"5 * 3 = {verdreifachen(5)}")
+
+# TODO: nonlocal
+def erstelle_zähler():
+    count = 0
+
+    def increment():
+        nonlocal count
+        count += 1
+        return count
+
+    return increment
+
+mein_zähler = erstelle_zähler()
+print(f"Zähler: {mein_zähler()}")
+print(f"Zähler: {mein_zähler()}")
+print(f"Zähler: {mein_zähler()}")`
+                    }
+                }
+            };
+
+            return templates[partId]?.[moduleId]?.[topicId] || `# Code Template für ${topicId}
+# TODO: Implementiere deine Lösung hier
+
+print("Hallo Welt!")
+
+# Füge deinen Code hier hinzu...
+`;
+        }
+
         async function showTaskSolution(partId, moduleId, topicId) {
             const lang = getCurrentLanguage();
-            const title = lang === 'de' ? 'Aufgaben' : 'Exercises';
+            const title = lang === 'de' ? 'Übung' : 'Exercise';
+            const codeTemplateTitle = lang === 'de' ? 'Code Template' : 'Code Template';
+            const instructionsTitle = lang === 'de' ? 'Aufgabenstellung' : 'Instructions';
 
             try {
-                // Load exercise content from file
+                // Get code template for this topic
+                const codeTemplate = getCodeTemplate(partId, moduleId, topicId);
+                const codeId = `exercise-${Date.now()}`;
+
+                // Create instructions content
+                let instructions;
+
+                // Try to load exercise content from file first
                 const exercisePath = `course_content/${partId}/${moduleId}/${topicId}/exercise_${lang}.html`;
                 const response = await fetch(exercisePath);
-                let content;
 
                 if (response.ok) {
-                    content = await response.text();
+                    instructions = await response.text();
                 } else {
-                    // Fallback content if file doesn't exist
-                    const taskTitle = lang === 'de' ? '🎯 Übungsaufgaben' : '🎯 Exercises';
-                    const task1 = lang === 'de' ? 'Aufgabe 1:' : 'Task 1:';
-                    const taskDesc = lang === 'de' ? `Erstelle ein Python-Skript für ${topicId}` : `Create a Python script for ${topicId}`;
+                    // Create default instructions based on topic
+                    const taskTitle = lang === 'de' ? '🎯 Übungsaufgaben' : '🎯 Exercise Tasks';
+                    const task1 = lang === 'de' ? 'Aufgabe:' : 'Task:';
+                    const taskDesc = lang === 'de'
+                        ? `Vervollständige das Code Template für "${topicId}" und führe die TODO-Aufgaben aus.`
+                        : `Complete the code template for "${topicId}" and work through the TODO tasks.`;
                     const tipLabel = lang === 'de' ? 'Tipp:' : 'Tip:';
-                    const tipText = lang === 'de' ? 'Schaue dir erst das Code-Beispiel an und probiere es selbst aus!' : 'Look at the code example first and try it yourself!';
+                    const tipText = lang === 'de'
+                        ? 'Kopiere den Code in deine Python-Umgebung und arbeite die TODO-Punkte Schritt für Schritt ab!'
+                        : 'Copy the code to your Python environment and work through the TODO items step by step!';
 
-                    content = `
-                        <h4 class="font-semibold mb-3">${taskTitle}</h4>
+                    instructions = `
+                        <h4 class="font-semibold mb-3 text-green-700">${taskTitle}</h4>
                         <div class="space-y-4">
-                            <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
-                                <h5 class="font-medium">${task1}</h5>
-                                <p class="text-sm text-gray-700">${taskDesc}</p>
+                            <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50 rounded">
+                                <h5 class="font-medium text-green-800">${task1}</h5>
+                                <p class="text-sm text-gray-700 mt-1">${taskDesc}</p>
                             </div>
-                            <div class="bg-gray-100 p-4 rounded">
-                                <p class="text-sm text-gray-600">💡 <strong>${tipLabel}</strong> ${tipText}</p>
+                            <div class="bg-blue-50 border border-blue-200 p-4 rounded">
+                                <p class="text-sm text-blue-800">💡 <strong>${tipLabel}</strong> ${tipText}</p>
                             </div>
                         </div>
                     `;
@@ -2843,16 +3293,32 @@ print("Code-Beispiel wird noch erstellt...")`;
 
                 const container = document.getElementById('taskContent');
                 container.innerHTML += `
-                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">${title} - ${topicId}</h3>
-                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times"></i>
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick="this.remove()">
+                        <div class="bg-white rounded-lg w-full max-w-6xl h-full max-h-[90vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center flex-shrink-0 bg-gray-50 rounded-t-lg">
+                                <h3 class="text-lg font-semibold text-gray-900">${title} - ${topicId}</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700 p-1 rounded hover:bg-gray-200">
+                                    <i class="fas fa-times text-xl"></i>
                                 </button>
                             </div>
-                            <div class="p-6">
-                                ${content}
+                            <div class="flex flex-1 overflow-hidden">
+                                <!-- Instructions Section -->
+                                <div class="w-1/3 p-4 border-r overflow-y-auto bg-gray-50">
+                                    <h4 class="font-semibold mb-3 text-gray-800">${instructionsTitle}:</h4>
+                                    <div class="text-sm">
+                                        ${instructions}
+                                    </div>
+                                </div>
+                                <!-- Code Template Section -->
+                                <div class="flex-1 p-4 overflow-y-auto">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="font-semibold text-gray-800">📝 ${codeTemplateTitle}:</h4>
+                                        <button onclick="copyCodeTemplate('${codeId}')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                            <i class="fas fa-copy mr-1"></i>${lang === 'de' ? 'Kopieren' : 'Copy'}
+                                        </button>
+                                    </div>
+                                    <pre id="${codeId}" class="bg-gray-900 text-green-400 p-4 rounded text-sm overflow-x-auto"><code>${escapeHtml(codeTemplate)}</code></pre>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2860,6 +3326,29 @@ print("Code-Beispiel wird noch erstellt...")`;
             } catch (error) {
                 console.error('Error loading exercise content:', error);
             }
+        }
+
+        // Function to copy code template to clipboard
+        function copyCodeTemplate(codeId) {
+            const codeElement = document.getElementById(codeId);
+            const codeText = codeElement.textContent;
+
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Show success message
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i>Kopiert!';
+                button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                button.classList.add('bg-green-600');
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                    button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+            });
         }
 
         // Make functions globally available
@@ -2870,6 +3359,7 @@ print("Code-Beispiel wird noch erstellt...")`;
         window.showCodeExample = showCodeExample;
         window.showLearningContent = showLearningContent;
         window.showTaskSolution = showTaskSolution;
+        window.copyCodeTemplate = copyCodeTemplate;
 
         // Load and display course content
         function loadCourseContent() {
