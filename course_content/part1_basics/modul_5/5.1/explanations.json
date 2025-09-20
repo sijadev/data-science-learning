@@ -1,0 +1,100 @@
+{
+  "topic": "Function Definition",
+  "explanations": {
+    "function_definition": {
+      "emoji": "🔧",
+      "title": {
+        "en": "Function Definition",
+        "de": "Funktionsdefinition"
+      },
+      "dataType": {
+        "en": "Function definition",
+        "de": "Funktionsdefinition"
+      },
+      "syntax": "def function_name(parameters):",
+      "usage": {
+        "en": "Creates reusable code blocks",
+        "de": "Erstellt wiederverwendbare Code-Blöcke"
+      },
+      "bestPractices": {
+        "en": [
+          "Use Type Hints: def add(a: int, b: int) -> int:",
+          "Docstrings for documentation",
+          "Snake_case for function names",
+          "Follow Single Responsibility Principle"
+        ],
+        "de": [
+          "Type Hints verwenden: def add(a: int, b: int) -> int:",
+          "Docstrings für Dokumentation",
+          "Snake_case für Funktionsnamen",
+          "Single Responsibility Principle beachten"
+        ]
+      },
+      "patterns": [
+        "^def\\s+\\w+\\s*\\("
+      ]
+    },
+    "function_call": {
+      "emoji": "📞",
+      "title": {
+        "en": "Function Call",
+        "de": "Funktionsaufruf"
+      },
+      "dataType": {
+        "en": "Function execution",
+        "de": "Funktionsausführung"
+      },
+      "syntax": "function_name(arguments)",
+      "usage": {
+        "en": "Execute a defined function",
+        "de": "Führt eine definierte Funktion aus"
+      },
+      "bestPractices": {
+        "en": [
+          "Use keyword arguments for clarity",
+          "Handle return values appropriately",
+          "Consider default parameter values"
+        ],
+        "de": [
+          "Verwende Keyword-Argumente für Klarheit",
+          "Behandle Rückgabewerte angemessen",
+          "Berücksichtige Standard-Parameterwerte"
+        ]
+      },
+      "patterns": [
+        "\\w+\\s*\\([^)]*\\)"
+      ]
+    },
+    "return_statement": {
+      "emoji": "↩️",
+      "title": {
+        "en": "Return Statement",
+        "de": "Return-Anweisung"
+      },
+      "dataType": {
+        "en": "Control flow",
+        "de": "Kontrollfluss"
+      },
+      "syntax": "return value",
+      "usage": {
+        "en": "Return value from function",
+        "de": "Gibt Wert aus Funktion zurück"
+      },
+      "bestPractices": {
+        "en": [
+          "Always return consistent types",
+          "Use early returns to reduce nesting",
+          "Document return types in docstrings"
+        ],
+        "de": [
+          "Gib immer konsistente Typen zurück",
+          "Verwende frühe Returns um Verschachtelung zu reduzieren",
+          "Dokumentiere Rückgabetypen in Docstrings"
+        ]
+      },
+      "patterns": [
+        "^return\\s+"
+      ]
+    }
+  }
+}

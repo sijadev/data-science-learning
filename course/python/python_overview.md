@@ -1,6 +1,4 @@
-# Python Overview:
-
-## 🎯 Teil 1: Python Grundlagen (~3 Wochen / 22 Tage)
+## Teil 1: Python Grundlagen (22 Tage)
 
 ### Modul 1: Erste Schritte mit Python 
 [Zum Modul1-Ordner](part1_basics/modul_1/)
@@ -88,7 +86,7 @@
 
 ---
 
-## 🚀 Teil 2: Python Fortgeschritten (9 Wochen / 72 Tage)
+## Teil 2: Python Fortgeschritten (72 Tage)
 
 ### Modul 6: Erweiterte Funktionskonzepte
 #### 6.1 Funktionale Programmierung (3 Tage)
@@ -177,7 +175,7 @@
 
 ---
 
-## 💡 Teil 3: Python Experte (27 Wochen / 189 Tage)
+## Teil 3: Python Experte (189 Tage)
 
 ### Modul 11: Concurrent Programming
 #### 11.1 Threading (7 Tage)

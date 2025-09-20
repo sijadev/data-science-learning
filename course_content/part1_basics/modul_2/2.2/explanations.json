@@ -1,0 +1,102 @@
+{
+  "topic": "Input and String Operations",
+  "explanations": {
+    "input_function": {
+      "emoji": "⌨️",
+      "title": {
+        "en": "Input Function",
+        "de": "Input-Funktion"
+      },
+      "dataType": {
+        "en": "Built-in function",
+        "de": "Eingebaute Funktion"
+      },
+      "syntax": "input(prompt)",
+      "usage": {
+        "en": "Read user input from console",
+        "de": "Liest Benutzereingabe von der Konsole"
+      },
+      "bestPractices": {
+        "en": [
+          "Always provide clear prompts",
+          "Validate and sanitize input",
+          "Convert to appropriate data types"
+        ],
+        "de": [
+          "Gib immer klare Eingabeaufforderungen",
+          "Validiere und bereinige Eingaben",
+          "Konvertiere zu passenden Datentypen"
+        ]
+      },
+      "patterns": [
+        "input\\s*\\("
+      ]
+    },
+    "string_methods": {
+      "emoji": "🔤",
+      "title": {
+        "en": "String Methods",
+        "de": "String-Methoden"
+      },
+      "dataType": {
+        "en": "String operations",
+        "de": "String-Operationen"
+      },
+      "syntax": "string.method()",
+      "usage": {
+        "en": "Manipulate and analyze strings",
+        "de": "Strings manipulieren und analysieren"
+      },
+      "bestPractices": {
+        "en": [
+          "Use .strip() to remove whitespace",
+          ".lower() and .upper() for case handling",
+          ".split() and .join() for parsing"
+        ],
+        "de": [
+          "Verwende .strip() um Whitespace zu entfernen",
+          ".lower() und .upper() für Groß-/Kleinschreibung",
+          ".split() und .join() für Parsing"
+        ]
+      },
+      "patterns": [
+        "\\.strip\\(\\)",
+        "\\.lower\\(\\)",
+        "\\.upper\\(\\)",
+        "\\.split\\(",
+        "\\.join\\("
+      ]
+    },
+    "f_strings": {
+      "emoji": "🎯",
+      "title": {
+        "en": "F-Strings",
+        "de": "F-Strings"
+      },
+      "dataType": {
+        "en": "String formatting",
+        "de": "String-Formatierung"
+      },
+      "syntax": "f\"text {variable}\"",
+      "usage": {
+        "en": "Format strings with variables",
+        "de": "Formatiert Strings mit Variablen"
+      },
+      "bestPractices": {
+        "en": [
+          "Preferred over .format() and % formatting",
+          "Use for readable string interpolation",
+          "Can include expressions: f\"{value:.2f}\""
+        ],
+        "de": [
+          "Bevorzugt gegenüber .format() und % Formatierung",
+          "Verwende für lesbare String-Interpolation",
+          "Kann Ausdrücke enthalten: f\"{value:.2f}\""
+        ]
+      },
+      "patterns": [
+        "f[\"'][^\"']*\\{[^}]+\\}[^\"']*[\"']"
+      ]
+    }
+  }
+}

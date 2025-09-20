@@ -1,0 +1,98 @@
+{
+  "topic": "Variables and Data Types",
+  "explanations": {
+    "integer_variable": {
+      "emoji": "📝",
+      "title": {
+        "en": "Integer Variable",
+        "de": "Integer Variable"
+      },
+      "dataType": {
+        "en": "Integer (whole number)",
+        "de": "Integer (Ganzzahl)"
+      },
+      "syntax": "variable_name = value",
+      "usage": {
+        "en": "Stores numeric values",
+        "de": "Speichert numerische Werte"
+      },
+      "bestPractices": {
+        "en": [
+          "Use Type Hints: age: int = 25",
+          "Descriptive variable names: user_age instead of a",
+          "Constants in UPPERCASE: MAX_SIZE = 100"
+        ],
+        "de": [
+          "Verwende Type Hints: age: int = 25",
+          "Aussagekräftige Variablennamen: user_age statt a",
+          "Konstanten in UPPERCASE: MAX_SIZE = 100"
+        ]
+      },
+      "patterns": [
+        "^(\\w+)\\s*=\\s*(\\d+)\\s*$"
+      ]
+    },
+    "float_variable": {
+      "emoji": "📝",
+      "title": {
+        "en": "Float Variable",
+        "de": "Float Variable"
+      },
+      "dataType": {
+        "en": "Float (decimal number)",
+        "de": "Float (Dezimalzahl)"
+      },
+      "syntax": "variable_name = value",
+      "usage": {
+        "en": "Stores decimal numeric values",
+        "de": "Speichert Dezimal-Zahlenwerte"
+      },
+      "bestPractices": {
+        "en": [
+          "Use Type Hints: price: float = 19.99",
+          "Be careful with floating point precision",
+          "Use Decimal for financial calculations"
+        ],
+        "de": [
+          "Verwende Type Hints: price: float = 19.99",
+          "Vorsicht bei Fließkomma-Präzision",
+          "Decimal für Finanzberechnungen verwenden"
+        ]
+      },
+      "patterns": [
+        "^(\\w+)\\s*=\\s*(\\d+\\.\\d+)\\s*$"
+      ]
+    },
+    "list_variable": {
+      "emoji": "📝",
+      "title": {
+        "en": "List Variable",
+        "de": "List Variable"
+      },
+      "dataType": {
+        "en": "List",
+        "de": "Liste"
+      },
+      "syntax": "variable = [item1, item2, ...]",
+      "usage": {
+        "en": "Stores multiple values in ordered sequence",
+        "de": "Speichert mehrere Werte in geordneter Reihenfolge"
+      },
+      "bestPractices": {
+        "en": [
+          "Type Hints: numbers: list[int] = [1, 2, 3]",
+          "List Comprehensions: [x*2 for x in numbers]",
+          "Use specific names: user_names instead of data"
+        ],
+        "de": [
+          "Type Hints: numbers: list[int] = [1, 2, 3]",
+          "List Comprehensions: [x*2 for x in numbers]",
+          "Verwende spezifische Namen: user_names statt data"
+        ]
+      },
+      "patterns": [
+        "^(\\w+)\\s*=\\s*\\[.*\\]\\s*$"
+      ]
+    }
+  }
+}

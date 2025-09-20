@@ -1,0 +1,98 @@
+{
+  "topic": "Control Structures - If Statements",
+  "explanations": {
+    "if_statement": {
+      "emoji": "🔀",
+      "title": {
+        "en": "If Statement",
+        "de": "If-Anweisung"
+      },
+      "dataType": {
+        "en": "Control structure",
+        "de": "Kontrollstruktur"
+      },
+      "syntax": "if condition:",
+      "usage": {
+        "en": "Conditional code execution",
+        "de": "Bedingte Code-Ausführung"
+      },
+      "bestPractices": {
+        "en": [
+          "Use parentheses for complex conditions",
+          "Walrus operator: if (n := len(data)) > 0:",
+          "Early returns for better readability"
+        ],
+        "de": [
+          "Verwende Klammern für komplexe Bedingungen",
+          "Walrus operator: if (n := len(data)) > 0:",
+          "Frühe Returns für bessere Lesbarkeit"
+        ]
+      },
+      "patterns": [
+        "^if\\s+.+:\\s*$"
+      ]
+    },
+    "elif_statement": {
+      "emoji": "🔀",
+      "title": {
+        "en": "Elif Statement",
+        "de": "Elif-Anweisung"
+      },
+      "dataType": {
+        "en": "Control structure",
+        "de": "Kontrollstruktur"
+      },
+      "syntax": "elif condition:",
+      "usage": {
+        "en": "Additional conditional branches",
+        "de": "Zusätzliche bedingte Verzweigungen"
+      },
+      "bestPractices": {
+        "en": [
+          "Use elif instead of nested if statements",
+          "Order conditions from most to least likely",
+          "Keep conditions simple and readable"
+        ],
+        "de": [
+          "Verwende elif statt verschachtelter if-Anweisungen",
+          "Ordne Bedingungen von wahrscheinlich zu unwahrscheinlich",
+          "Halte Bedingungen einfach und lesbar"
+        ]
+      },
+      "patterns": [
+        "^elif\\s+.+:\\s*$"
+      ]
+    },
+    "else_statement": {
+      "emoji": "🔀",
+      "title": {
+        "en": "Else Statement",
+        "de": "Else-Anweisung"
+      },
+      "dataType": {
+        "en": "Control structure",
+        "de": "Kontrollstruktur"
+      },
+      "syntax": "else:",
+      "usage": {
+        "en": "Default case when no conditions are met",
+        "de": "Standardfall wenn keine Bedingungen erfüllt sind"
+      },
+      "bestPractices": {
+        "en": [
+          "Always consider if else is necessary",
+          "Use else for default/fallback behavior",
+          "Keep else blocks simple"
+        ],
+        "de": [
+          "Überlege immer, ob else notwendig ist",
+          "Verwende else für Standard-/Fallback-Verhalten",
+          "Halte else-Blöcke einfach"
+        ]
+      },
+      "patterns": [
+        "^else:\\s*$"
+      ]
+    }
+  }
+}

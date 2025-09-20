@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,38 @@
     
     <!-- Custom Styles -->
     <style>
+        /* Language toggle styles */
+        .lang-toggle {
+            position: fixed;
+            top: 8px;
+            right: 10px;
+            z-index: 100;
+            background: white;
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .lang-content[data-lang]:not(.active) {
+            display: none !important;
+        }
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -169,9 +201,320 @@
             margin: 1rem 0;
             border-left: 4px solid #f59e0b;
         }
+
+        /* Code line numbers */
+        .line-number {
+            display: inline-block;
+            width: 35px;
+            text-align: right;
+            padding-right: 10px;
+            margin-right: 10px;
+            color: #666;
+            border-right: 1px solid #444;
+            user-select: none;
+            vertical-align: top;
+            flex-shrink: 0;
+        }
+
+        /* Custom scrollbar for code explanation */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Code line highlighting */
+        .code-line {
+            display: flex;
+            padding: 2px 0;
+            transition: background-color 0.3s;
+            align-items: flex-start;
+        }
+
+        .code-line.highlighted {
+            background-color: rgba(124, 58, 237, 0.2);
+            box-shadow: inset 3px 0 0 #7c3aed;
+        }
+
+        .code-content {
+            flex: 1;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
+        }
+
+        /* Code container responsive */
+        pre code {
+            display: block;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 1200px) {
+            .flex > div {
+                flex-direction: column;
+            }
+        }
+
+        .explanation-item {
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px;
+            border-radius: 4px;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            overflow-x: hidden;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .explanation-item:hover {
+            background-color: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            width: 400px;
+            max-width: 90vw;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+        }
+
+        .tooltip .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-content strong {
+            color: #7c3aed;
+        }
+
+        .tooltip-content code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+
+        /* Enhanced tooltip for explanation items */
+        .explanation-item {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .explanation-item .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 450px;
+            max-width: 95vw;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            z-index: 10000;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                        0 8px 32px rgba(124, 58, 237, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+        }
+
+        .explanation-item .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+
+        .explanation-item:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .explanation-item .tooltip-content .tooltip-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .explanation-item .tooltip-content .tooltip-emoji {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .explanation-item .tooltip-content .tooltip-title {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .explanation-item .tooltip-content .tooltip-section {
+            margin: 8px 0;
+        }
+
+        .explanation-item .tooltip-content .tooltip-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .explanation-item .tooltip-content .tooltip-value {
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .explanation-item .tooltip-content .best-practices {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 10px;
+        }
+
+        .explanation-item .tooltip-content .best-practices .label {
+            color: #34d399;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .explanation-item .tooltip-content .best-practices ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .explanation-item .tooltip-content .best-practices li {
+            color: #a7f3d0;
+            margin: 4px 0;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .explanation-item .tooltip-content .best-practices li::before {
+            content: "•";
+            color: #34d399;
+            position: absolute;
+            left: 0;
+        }
+
+        .explanation-item .font-mono {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow-x: hidden;
+            max-width: 100%;
+            display: block;
+        }
+
+        /* Additional styling to prevent horizontal scroll */
+        .explanation-item * {
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
     </style>
 
     <script>
+        // Language toggle functionality
+        function setLanguage(lang) {
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+
+            // Update all language content
+            document.querySelectorAll('.lang-content').forEach(element => {
+                if (element.dataset.lang === lang) {
+                    element.classList.add('active');
+                } else {
+                    element.classList.remove('active');
+                }
+            });
+
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Store preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        // Load preferred language on startup
+        document.addEventListener('DOMContentLoaded', function() {
+            const preferredLang = localStorage.getItem('preferredLanguage') || 'en';
+            setLanguage(preferredLang);
+        });
+
         // Define showSection immediately for navigation to work
         function showSection(sectionId, clickedElement) {
             // Wait for DOM to be ready if needed
@@ -223,19 +566,42 @@
     </script>
 </head>
 <body class="bg-gray-50">
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLanguage('en')" data-lang="en">EN</button>
+        <button class="lang-btn" onclick="setLanguage('de')" data-lang="de">DE</button>
+    </div>
     <!-- Navigation -->
     <nav class="gradient-bg text-white p-4 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-4">
                 <i class="fas fa-rocket text-2xl float-animation"></i>
-                <h1 class="text-2xl font-bold">Data Science Journey</h1>
+                <h1 class="text-2xl font-bold">
+                    <span class="lang-content active" data-lang="en">Data Science Journey</span>
+                    <span class="lang-content" data-lang="de">Data Science Reise</span>
+                </h1>
             </div>
             <div class="flex space-x-6">
-                <a onclick="showSection('overview', this); return false;" class="nav-link hover:text-purple-200 transition active">Overview</a>
-                <a onclick="showSection('progress', this); return false;" class="nav-link hover:text-purple-200 transition">Progress</a>
-                <a onclick="showSection('achievements', this); return false;" class="nav-link hover:text-purple-200 transition">Achievements</a>
-                <a onclick="showSection('projects', this); return false;" class="nav-link hover:text-purple-200 transition">Projects</a>
-                <a onclick="showSection('course', this); return false;" class="nav-link hover:text-purple-200 transition">Course</a>
+                <a onclick="showSection('overview', this); return false;" class="nav-link hover:text-purple-200 transition active">
+                    <span class="lang-content active" data-lang="en">Overview</span>
+                    <span class="lang-content" data-lang="de">Übersicht</span>
+                </a>
+                <a onclick="showSection('progress', this); return false;" class="nav-link hover:text-purple-200 transition">
+                    <span class="lang-content active" data-lang="en">Progress</span>
+                    <span class="lang-content" data-lang="de">Fortschritt</span>
+                </a>
+                <a onclick="showSection('achievements', this); return false;" class="nav-link hover:text-purple-200 transition">
+                    <span class="lang-content active" data-lang="en">Achievements</span>
+                    <span class="lang-content" data-lang="de">Erfolge</span>
+                </a>
+                <a onclick="showSection('projects', this); return false;" class="nav-link hover:text-purple-200 transition">
+                    <span class="lang-content active" data-lang="en">Projects</span>
+                    <span class="lang-content" data-lang="de">Projekte</span>
+                </a>
+                <a onclick="showSection('course', this); return false;" class="nav-link hover:text-purple-200 transition">
+                    <span class="lang-content active" data-lang="en">Course</span>
+                    <span class="lang-content" data-lang="de">Kurs</span>
+                </a>
                 <a href="https://github.com/sijadev/data-science-learning" target="_blank" class="hover:text-purple-200 transition">
                     <i class="fab fa-github text-xl"></i>
                 </a>
@@ -246,20 +612,35 @@
     <!-- Hero Section -->
     <section class="gradient-bg text-white py-20">
         <div class="container mx-auto text-center">
-            <h2 class="text-5xl font-bold mb-4">From Zero to Data Scientist Hero</h2>
-            <p class="text-xl mb-8">12-Month Learning Journey • Started September 19, 2025</p>
+            <h2 class="text-5xl font-bold mb-4">
+                <span class="lang-content active" data-lang="en">From Zero to Data Scientist Hero</span>
+                <span class="lang-content" data-lang="de">Von Null zum Data Scientist Hero</span>
+            </h2>
+            <p class="text-xl mb-8">
+                <span class="lang-content active" data-lang="en">12-Month Learning Journey • Started September 19, 2025</span>
+                <span class="lang-content" data-lang="de">12-Monatige Lernreise • Begonnen am 19. September 2025</span>
+            </p>
             <div class="flex justify-center space-x-8">
                 <div class="text-center">
                     <div class="text-4xl font-bold" id="daysCounter">0</div>
-                    <div class="text-sm">Days</div>
+                    <div class="text-sm">
+                        <span class="lang-content active" data-lang="en">Days</span>
+                        <span class="lang-content" data-lang="de">Tage</span>
+                    </div>
                 </div>
                 <div class="text-center">
                     <div class="text-4xl font-bold" id="weeksCounter">1</div>
-                    <div class="text-sm">of 48 Weeks</div>
+                    <div class="text-sm">
+                        <span class="lang-content active" data-lang="en">of 48 Weeks</span>
+                        <span class="lang-content" data-lang="de">von 48 Wochen</span>
+                    </div>
                 </div>
                 <div class="text-center">
                     <div class="text-4xl font-bold" id="progressPercent">0%</div>
-                    <div class="text-sm">Complete</div>
+                    <div class="text-sm">
+                        <span class="lang-content active" data-lang="en">Complete</span>
+                        <span class="lang-content" data-lang="de">Abgeschlossen</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -270,7 +651,9 @@
         <!-- Overview Section -->
         <section id="overview" class="content-section active mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-chart-line text-purple-600 mr-2"></i>Current Status
+                <i class="fas fa-chart-line text-purple-600 mr-2"></i>
+                <span class="lang-content active" data-lang="en">Current Status</span>
+                <span class="lang-content" data-lang="de">Aktueller Status</span>
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -278,50 +661,73 @@
                 <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-gray-500 text-sm">Total Commits</p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="lang-content active" data-lang="en">Total Commits</span>
+                                <span class="lang-content" data-lang="de">Gesamte Commits</span>
+                            </p>
                             <p class="text-3xl font-bold text-gray-800" id="totalCommits">0</p>
                         </div>
                         <i class="fas fa-code-branch text-3xl text-green-500"></i>
                     </div>
                     <div class="text-sm text-green-600">
                         <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="commitsThisWeek">0</span> this week
+                        <span id="commitsThisWeek">0</span>
+                        <span class="lang-content active" data-lang="en">this week</span>
+                        <span class="lang-content" data-lang="de">diese Woche</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-gray-500 text-sm">Achievement Points</p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="lang-content active" data-lang="en">Achievement Points</span>
+                                <span class="lang-content" data-lang="de">Erfolgspunkte</span>
+                            </p>
                             <p class="text-3xl font-bold text-gray-800" id="achievementPoints">0 XP</p>
                         </div>
                         <i class="fas fa-trophy text-3xl text-yellow-500"></i>
                     </div>
                     <div class="text-sm text-blue-600">
-                        Level <span id="currentLevel">0</span>
+                        <span class="lang-content active" data-lang="en">Level</span>
+                        <span class="lang-content" data-lang="de">Stufe</span>
+                        <span id="currentLevel">0</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-gray-500 text-sm">Current Streak</p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="lang-content active" data-lang="en">Current Streak</span>
+                                <span class="lang-content" data-lang="de">Aktuelle Serie</span>
+                            </p>
                             <p class="text-3xl font-bold text-gray-800">
                                 <span id="currentStreak">0</span> 
-                                <span class="text-lg">days</span>
+                                <span class="text-lg">
+                                    <span class="lang-content active" data-lang="en">days</span>
+                                    <span class="lang-content" data-lang="de">Tage</span>
+                                </span>
                             </p>
                         </div>
                         <i class="fas fa-fire text-3xl text-orange-500"></i>
                     </div>
                     <div class="text-sm text-orange-600">
-                        Best: <span id="bestStreak">0</span> days
+                        <span class="lang-content active" data-lang="en">Best:</span>
+                        <span class="lang-content" data-lang="de">Beste:</span>
+                        <span id="bestStreak">0</span>
+                        <span class="lang-content active" data-lang="en">days</span>
+                        <span class="lang-content" data-lang="de">Tage</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-gray-500 text-sm">Projects Complete</p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="lang-content active" data-lang="en">Projects Complete</span>
+                                <span class="lang-content" data-lang="de">Projekte abgeschlossen</span>
+                            </p>
                             <p class="text-3xl font-bold text-gray-800">
                                 <span id="projectsComplete">0</span>/<span id="projectsTotal">5</span>
                             </p>
@@ -337,7 +743,9 @@
             <!-- Weekly Goals for Overview/Homepage -->
             <div class="mt-12">
                 <h4 class="text-2xl font-bold mb-6 text-gray-800">
-                    <i class="fas fa-bullseye text-purple-600 mr-2"></i>This Week's Goals
+                    <i class="fas fa-bullseye text-purple-600 mr-2"></i>
+                    <span class="lang-content active" data-lang="en">This Week's Goals</span>
+                    <span class="lang-content" data-lang="de">Ziele dieser Woche</span>
                 </h4>
 
                 <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -351,17 +759,25 @@
         <!-- Progress Section -->
         <section id="progress" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-tasks text-purple-600 mr-2"></i>Learning Progress
+                <i class="fas fa-tasks text-purple-600 mr-2"></i>
+                <span class="lang-content active" data-lang="en">Learning Progress</span>
+                <span class="lang-content" data-lang="de">Lernfortschritt</span>
             </h3>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Phase Progress -->
                 <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h4 class="text-xl font-semibold mb-4">Phase Progress</h4>
+                    <h4 class="text-xl font-semibold mb-4">
+                        <span class="lang-content active" data-lang="en">Phase Progress</span>
+                        <span class="lang-content" data-lang="de">Phasenfortschritt</span>
+                    </h4>
                     <div class="space-y-4">
                         <div>
                             <div class="flex justify-between mb-1">
-                                <span class="text-sm">Phase 1: Foundations</span>
+                                <span class="text-sm">
+                                    <span class="lang-content active" data-lang="en">Phase 1: Foundations</span>
+                                    <span class="lang-content" data-lang="de">Phase 1: Grundlagen</span>
+                                </span>
                                 <span class="text-sm" id="phase1Progress">0%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
@@ -370,7 +786,10 @@
                         </div>
                         <div>
                             <div class="flex justify-between mb-1">
-                                <span class="text-sm">Phase 2: Machine Learning</span>
+                                <span class="text-sm">
+                                    <span class="lang-content active" data-lang="en">Phase 2: Machine Learning</span>
+                                    <span class="lang-content" data-lang="de">Phase 2: Maschinelles Lernen</span>
+                                </span>
                                 <span class="text-sm" id="phase2Progress">0%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
@@ -379,7 +798,10 @@
                         </div>
                         <div>
                             <div class="flex justify-between mb-1">
-                                <span class="text-sm">Phase 3: Production</span>
+                                <span class="text-sm">
+                                    <span class="lang-content active" data-lang="en">Phase 3: Production</span>
+                                    <span class="lang-content" data-lang="de">Phase 3: Produktion</span>
+                                </span>
                                 <span class="text-sm" id="phase3Progress">0%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
@@ -391,23 +813,35 @@
 
                 <!-- Skills Radar -->
                 <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h4 class="text-xl font-semibold mb-4">Skills Development</h4>
+                    <h4 class="text-xl font-semibold mb-4">
+                        <span class="lang-content active" data-lang="en">Skills Development</span>
+                        <span class="lang-content" data-lang="de">Kompetenzentwicklung</span>
+                    </h4>
                     <canvas id="skillsRadar"></canvas>
                 </div>
             </div>
 
             <!-- Activity Calendar -->
             <div class="bg-white p-6 rounded-lg shadow-lg mt-6">
-                <h4 class="text-xl font-semibold mb-4">Activity Calendar (Last 90 Days)</h4>
+                <h4 class="text-xl font-semibold mb-4">
+                    <span class="lang-content active" data-lang="en">Activity Calendar (Last 90 Days)</span>
+                    <span class="lang-content" data-lang="de">Aktivitätskalender (Letzte 90 Tage)</span>
+                </h4>
                 <div id="activityCalendar" class="github-calendar"></div>
                 <div class="flex items-center justify-end mt-4 space-x-2 text-sm">
-                    <span>Less</span>
+                    <span>
+                        <span class="lang-content active" data-lang="en">Less</span>
+                        <span class="lang-content" data-lang="de">Weniger</span>
+                    </span>
                     <div class="w-3 h-3 bg-gray-200"></div>
                     <div class="w-3 h-3 bg-green-200"></div>
                     <div class="w-3 h-3 bg-green-400"></div>
                     <div class="w-3 h-3 bg-green-600"></div>
                     <div class="w-3 h-3 bg-green-800"></div>
-                    <span>More</span>
+                    <span>
+                        <span class="lang-content active" data-lang="en">More</span>
+                        <span class="lang-content" data-lang="de">Mehr</span>
+                    </span>
                 </div>
             </div>
         </section>
@@ -415,7 +849,9 @@
         <!-- Achievements Section -->
         <section id="achievements" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-medal text-purple-600 mr-2"></i>Achievements
+                <i class="fas fa-medal text-purple-600 mr-2"></i>
+                <span class="lang-content active" data-lang="en">Achievements</span>
+                <span class="lang-content" data-lang="de">Erfolge</span>
             </h3>
             
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="achievementGrid">
@@ -426,7 +862,9 @@
         <!-- Projects Section -->
         <section id="projects" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-project-diagram text-purple-600 mr-2"></i>Portfolio Projects
+                <i class="fas fa-project-diagram text-purple-600 mr-2"></i>
+                <span class="lang-content active" data-lang="en">Portfolio Projects</span>
+                <span class="lang-content" data-lang="de">Portfolio-Projekte</span>
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectsGrid">
@@ -437,13 +875,18 @@
         <!-- Course Section -->
         <section id="course" class="content-section mb-12">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Python Course
+                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>
+                <span class="lang-content active" data-lang="en">Python Course</span>
+                <span class="lang-content" data-lang="de">Python-Kurs</span>
             </h3>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Course Navigation -->
                 <div class="bg-white rounded-lg shadow-lg p-4">
-                    <h4 class="text-lg font-semibold mb-4 text-gray-800">Course Navigation</h4>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-800">
+                        <span class="lang-content active" data-lang="en">Course Navigation</span>
+                        <span class="lang-content" data-lang="de">Kursnavigation</span>
+                    </h4>
                     <div id="courseNavigation">
                         <!-- Navigation will be populated here -->
                     </div>
@@ -455,31 +898,68 @@
                         <!-- Breadcrumb -->
                         <nav class="mb-4">
                             <ol class="flex space-x-2 text-sm text-gray-600">
-                                <li id="courseBreadcrumb">Course Overview</li>
+                                <li id="courseBreadcrumb">
+                                    <span class="lang-content active" data-lang="en">Course Overview</span>
+                                    <span class="lang-content" data-lang="de">Kursübersicht</span>
+                                </li>
                             </ol>
                         </nav>
 
                         <!-- Content Area -->
                         <div id="courseContentArea">
                             <div id="courseOverview">
-                                <h2 class="text-2xl font-bold mb-4">Python Komplettkurs</h2>
-                                <p class="text-gray-600 mb-6">Wählen Sie ein Modul aus der Navigation, um mit dem Lernen zu beginnen.</p>
+                                <h2 class="text-2xl font-bold mb-4">
+                                    <span class="lang-content active" data-lang="en">Complete Python Course</span>
+                                    <span class="lang-content" data-lang="de">Python Komplettkurs</span>
+                                </h2>
+                                <p class="text-gray-600 mb-4">
+                                    <span class="lang-content active" data-lang="en">Select a module from the navigation to start learning.</span>
+                                    <span class="lang-content" data-lang="de">Wählen Sie ein Modul aus der Navigation, um mit dem Lernen zu beginnen.</span>
+                                </p>
+
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part1_basics')">
-                                        <h3 class="font-semibold text-lg">📚 Teil 1</h3>
-                                        <p class="text-sm text-gray-600">Python Grundlagen</p>
-                                        <p class="text-xs text-purple-600">22 Tage</p>
+                                        <h3 class="font-semibold text-lg">
+                                            <span class="lang-content active" data-lang="en">📚 Part 1</span>
+                                            <span class="lang-content" data-lang="de">📚 Teil 1</span>
+                                        </h3>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="lang-content active" data-lang="en">Python Basics</span>
+                                            <span class="lang-content" data-lang="de">Python Grundlagen</span>
+                                        </p>
+                                        <p class="text-xs text-purple-600">
+                                            <span class="lang-content active" data-lang="en">22 Days</span>
+                                            <span class="lang-content" data-lang="de">22 Tage</span>
+                                        </p>
                                     </div>
                                     <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part2_advanced')">
-                                        <h3 class="font-semibold text-lg">🚀 Teil 2</h3>
-                                        <p class="text-sm text-gray-600">Fortgeschritten</p>
-                                        <p class="text-xs text-purple-600">72 Tage</p>
+                                        <h3 class="font-semibold text-lg">
+                                            <span class="lang-content active" data-lang="en">🚀 Part 2</span>
+                                            <span class="lang-content" data-lang="de">🚀 Teil 2</span>
+                                        </h3>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="lang-content active" data-lang="en">Advanced</span>
+                                            <span class="lang-content" data-lang="de">Fortgeschritten</span>
+                                        </p>
+                                        <p class="text-xs text-purple-600">
+                                            <span class="lang-content active" data-lang="en">72 Days</span>
+                                            <span class="lang-content" data-lang="de">72 Tage</span>
+                                        </p>
                                     </div>
                                     <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadCoursePart('part3_expert')">
-                                        <h3 class="font-semibold text-lg">💡 Teil 3</h3>
-                                        <p class="text-sm text-gray-600">Python Experte</p>
-                                        <p class="text-xs text-purple-600">189 Tage</p>
+                                        <h3 class="font-semibold text-lg">
+                                            <span class="lang-content active" data-lang="en">💡 Part 3</span>
+                                            <span class="lang-content" data-lang="de">💡 Teil 3</span>
+                                        </h3>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="lang-content active" data-lang="en">Python Expert</span>
+                                            <span class="lang-content" data-lang="de">Python Experte</span>
+                                        </p>
+                                        <p class="text-xs text-purple-600">
+                                            <span class="lang-content active" data-lang="en">189 Days</span>
+                                            <span class="lang-content" data-lang="de">189 Tage</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -503,7 +983,10 @@
     <!-- Footer -->
     <footer class="gradient-bg text-white py-8 mt-12">
         <div class="container mx-auto text-center">
-            <p class="mb-2">📚 Learning in Public • 12-Month Journey to Data Science</p>
+            <p class="mb-2">
+                <span class="lang-content active" data-lang="en">📚 Learning in Public • 12-Month Journey to Data Science</span>
+                <span class="lang-content" data-lang="de">📚 Öffentliches Lernen • 12-Monatige Reise zur Data Science</span>
+            </p>
             <div class="flex justify-center space-x-4">
                 <a href="https://github.com/sijadev" class="hover:text-purple-200">
                     <i class="fab fa-github text-2xl"></i>
@@ -515,7 +998,11 @@
                     <i class="fab fa-twitter text-2xl"></i>
                 </a>
             </div>
-            <p class="text-sm mt-4">Last updated: <span id="lastUpdated"></span></p>
+            <p class="text-sm mt-4">
+                <span class="lang-content active" data-lang="en">Last updated:</span>
+                <span class="lang-content" data-lang="de">Zuletzt aktualisiert:</span>
+                <span id="lastUpdated"></span>
+            </p>
         </div>
     </footer>
 
@@ -790,49 +1277,189 @@
         // Course Structure Data
         const courseStructure = {
             'part1_basics': {
-                name: 'Teil 1: Python Grundlagen',
-                duration: '22 Tage',
+                name: {
+                    en: 'Part 1: Python Basics',
+                    de: 'Teil 1: Python Grundlagen'
+                },
+                duration: {
+                    en: '22 Days',
+                    de: '22 Tage'
+                },
                 modules: {
                     'modul_1': {
-                        name: 'Modul 1: Erste Schritte mit Python',
+                        name: {
+                            en: 'Module 1: Getting Started with Python',
+                            de: 'Modul 1: Erste Schritte mit Python'
+                        },
                         topics: {
-                            '1.1': { name: 'Installation und Einrichtung', duration: '0.5 Tag' },
-                            '1.2': { name: 'Grundlegende Syntax', duration: '0.5 Tag' }
+                            '1.1': {
+                                name: {
+                                    en: 'Installation and Setup',
+                                    de: 'Installation und Einrichtung'
+                                },
+                                duration: {
+                                    en: '0.5 Day',
+                                    de: '0.5 Tag'
+                                }
+                            },
+                            '1.2': {
+                                name: {
+                                    en: 'Basic Syntax',
+                                    de: 'Grundlegende Syntax'
+                                },
+                                duration: {
+                                    en: '0.5 Day',
+                                    de: '0.5 Tag'
+                                }
+                            }
                         }
                     },
                     'modul_2': {
-                        name: 'Modul 2: Datentypen und Variablen',
+                        name: {
+                            en: 'Module 2: Data Types and Variables',
+                            de: 'Modul 2: Datentypen und Variablen'
+                        },
                         topics: {
-                            '2.1': { name: 'Basis-Datentypen', duration: '0.5 Tage' },
-                            '2.2': { name: 'Variablen und Operatoren', duration: '0.5 Tage' }
+                            '2.1': {
+                                name: {
+                                    en: 'Basic Data Types',
+                                    de: 'Basis-Datentypen'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            },
+                            '2.2': {
+                                name: {
+                                    en: 'Variables and Operators',
+                                    de: 'Variablen und Operatoren'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            }
                         }
                     },
                     'modul_3': {
-                        name: 'Modul 3: Kontrollstrukturen',
+                        name: {
+                            en: 'Module 3: Control Structures',
+                            de: 'Modul 3: Kontrollstrukturen'
+                        },
                         topics: {
-                            '3.1': { name: 'Bedingte Anweisungen', duration: '1 Tag' },
-                            '3.2': { name: 'Schleifen', duration: '1 Tag' }
+                            '3.1': {
+                                name: {
+                                    en: 'Conditional Statements',
+                                    de: 'Bedingte Anweisungen'
+                                },
+                                duration: {
+                                    en: '1 Day',
+                                    de: '1 Tag'
+                                }
+                            },
+                            '3.2': {
+                                name: {
+                                    en: 'Loops',
+                                    de: 'Schleifen'
+                                },
+                                duration: {
+                                    en: '1 Day',
+                                    de: '1 Tag'
+                                }
+                            }
                         }
                     },
                     'modul_4': {
-                        name: 'Modul 4: Datenstrukturen',
+                        name: {
+                            en: 'Module 4: Data Structures',
+                            de: 'Modul 4: Datenstrukturen'
+                        },
                         topics: {
-                            '4.1': { name: 'Listen', duration: '1 Tag' },
-                            '4.2': { name: 'Tupel', duration: '1 Tag' },
-                            '4.3': { name: 'Dictionaries', duration: '0.5 Tage' },
-                            '4.4': { name: 'Sets', duration: '0.5 Tage' }
+                            '4.1': {
+                                name: {
+                                    en: 'Lists',
+                                    de: 'Listen'
+                                },
+                                duration: {
+                                    en: '1 Day',
+                                    de: '1 Tag'
+                                }
+                            },
+                            '4.2': {
+                                name: {
+                                    en: 'Tuples',
+                                    de: 'Tupel'
+                                },
+                                duration: {
+                                    en: '1 Day',
+                                    de: '1 Tag'
+                                }
+                            },
+                            '4.3': {
+                                name: {
+                                    en: 'Dictionaries',
+                                    de: 'Dictionaries'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            },
+                            '4.4': {
+                                name: {
+                                    en: 'Sets',
+                                    de: 'Sets'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            }
                         }
                     },
                     'modul_5': {
-                        name: 'Modul 5: Funktionen Grundlagen',
+                        name: {
+                            en: 'Module 5: Functions Basics',
+                            de: 'Modul 5: Funktionen Grundlagen'
+                        },
                         topics: {
-                            '5.1': { name: 'Funktionsdefinition', duration: '0.5 Tage' },
-                            '5.2': { name: 'Scope und Namespaces', duration: '0.5 Tage' }
+                            '5.1': {
+                                name: {
+                                    en: 'Function Definition',
+                                    de: 'Funktionsdefinition'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            },
+                            '5.2': {
+                                name: {
+                                    en: 'Scope and Namespaces',
+                                    de: 'Scope und Namespaces'
+                                },
+                                duration: {
+                                    en: '0.5 Days',
+                                    de: '0.5 Tage'
+                                }
+                            }
                         }
                     }
                 }
             }
         };
+
+        // Helper function to get current language
+        function getCurrentLanguage() {
+            return localStorage.getItem('preferredLanguage') || 'en';
+        }
+
+        // Helper function to get localized text
+        function getLocalizedText(obj) {
+            const lang = getCurrentLanguage();
+            return typeof obj === 'object' ? (obj[lang] || obj.en || obj.de) : obj;
+        }
 
         // Course Navigation Functions
         function loadCoursePart(partId) {
@@ -843,7 +1470,7 @@
             document.getElementById('courseBreadcrumb').innerHTML = `
                 <a href="#" onclick="showCourseOverview()" class="text-purple-600 hover:underline">Course</a>
                 <span class="mx-2">></span>
-                <span>${part.name}</span>
+                <span>${getLocalizedText(part.name)}</span>
             `;
 
             // Hide overview, show module content
@@ -862,9 +1489,12 @@
             const nav = document.getElementById('courseNavigation');
             let html = '<div class="space-y-2">';
 
+            const lang = getCurrentLanguage();
+            const overviewText = lang === 'de' ? 'Übersicht' : 'Overview';
+
             // Overview link
             html += `<div class="py-2 px-3 rounded hover:bg-gray-100 cursor-pointer" onclick="showCourseOverview()">
-                <i class="fas fa-home mr-2"></i>Overview
+                <i class="fas fa-home mr-2"></i>${overviewText}
             </div>`;
 
             // Course parts
@@ -873,8 +1503,8 @@
                 const isActive = partId === currentPart;
 
                 html += `<div class="py-2 px-3 rounded ${isActive ? 'bg-purple-100 text-purple-800' : 'hover:bg-gray-100'} cursor-pointer" onclick="loadCoursePart('${partId}')">
-                    <div class="font-medium">${part.name}</div>
-                    <div class="text-xs text-gray-500">${part.duration}</div>
+                    <div class="font-medium">${getLocalizedText(part.name)}</div>
+                    <div class="text-xs text-gray-500">${getLocalizedText(part.duration)}</div>
                 </div>`;
 
                 // Show modules if this part is active
@@ -882,7 +1512,7 @@
                     Object.keys(part.modules).forEach(moduleId => {
                         const module = part.modules[moduleId];
                         html += `<div class="ml-4 py-1 px-3 rounded hover:bg-gray-100 cursor-pointer text-sm" onclick="loadModule('${partId}', '${moduleId}')">
-                            <i class="fas fa-book mr-2"></i>${module.name}
+                            <i class="fas fa-book mr-2"></i>${getLocalizedText(module.name)}
                         </div>`;
                     });
                 }
@@ -895,28 +1525,30 @@
         function loadModuleList(partId) {
             const part = courseStructure[partId];
             const content = document.getElementById('moduleContent');
+            const lang = getCurrentLanguage();
+            const topicsText = lang === 'de' ? 'Themen' : 'Topics';
 
-            let html = `<h2 class="text-2xl font-bold mb-4">${part.name}</h2>`;
+            let html = `<h2 class="text-2xl font-bold mb-4">${getLocalizedText(part.name)}</h2>`;
             html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
 
             Object.keys(part.modules).forEach(moduleId => {
                 const module = part.modules[moduleId];
                 html += `
                     <div class="border rounded-lg p-4 cursor-pointer hover:bg-gray-50" onclick="loadModule('${partId}', '${moduleId}')">
-                        <h3 class="font-semibold text-lg mb-2">${module.name}</h3>
+                        <h3 class="font-semibold text-lg mb-2">${getLocalizedText(module.name)}</h3>
                         <div class="space-y-1">
                 `;
 
                 Object.keys(module.topics).forEach(topicId => {
                     const topic = module.topics[topicId];
-                    html += `<div class="text-sm text-gray-600">• ${topic.name} (${topic.duration})</div>`;
+                    html += `<div class="text-sm text-gray-600">• ${getLocalizedText(topic.name)} (${getLocalizedText(topic.duration)})</div>`;
                 });
 
                 html += `
                         </div>
                         <div class="mt-3">
                             <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                                ${Object.keys(module.topics).length} Themen
+                                ${Object.keys(module.topics).length} ${topicsText}
                             </span>
                         </div>
                     </div>
@@ -935,9 +1567,9 @@
             document.getElementById('courseBreadcrumb').innerHTML = `
                 <a href="#" onclick="showCourseOverview()" class="text-purple-600 hover:underline">Course</a>
                 <span class="mx-2">></span>
-                <a href="#" onclick="loadCoursePart('${partId}')" class="text-purple-600 hover:underline">${part.name}</a>
+                <a href="#" onclick="loadCoursePart('${partId}')" class="text-purple-600 hover:underline">${getLocalizedText(part.name)}</a>
                 <span class="mx-2">></span>
-                <span>${module.name}</span>
+                <span>${getLocalizedText(module.name)}</span>
             `;
 
             // Show task content
@@ -952,36 +1584,41 @@
         async function loadModuleContent(partId, moduleId) {
             const content = document.getElementById('taskContent');
             const module = courseStructure[partId].modules[moduleId];
+            const lang = getCurrentLanguage();
 
             let html = `
-                <h2 class="text-2xl font-bold mb-4">${module.name}</h2>
+                <h2 class="text-2xl font-bold mb-4">${getLocalizedText(module.name)}</h2>
                 <div class="space-y-6">
             `;
 
             // Add topics
             Object.keys(module.topics).forEach(topicId => {
                 const topic = module.topics[topicId];
+                const durationLabel = lang === 'de' ? 'Dauer' : 'Duration';
+                const taskLabel = lang === 'de' ? 'Aufgabe' : 'Task';
+                const descText = lang === 'de' ? `Lerninhalte und Übungen für ${getLocalizedText(topic.name)}` : `Learning content and exercises for ${getLocalizedText(topic.name)}`;
+
                 html += `
                     <div class="border rounded-lg p-6">
-                        <h3 class="text-xl font-semibold mb-3">${topicId} ${topic.name}</h3>
-                        <p class="text-gray-600 mb-4">Dauer: ${topic.duration}</p>
+                        <h3 class="text-xl font-semibold mb-3">${topicId} ${getLocalizedText(topic.name)}</h3>
+                        <p class="text-gray-600 mb-4">${durationLabel}: ${getLocalizedText(topic.duration)}</p>
 
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-medium mb-2">📝 Aufgabe:</h4>
-                            <p class="text-gray-700 mb-4">Lerninhalte und Übungen für ${topic.name}</p>
+                            <h4 class="font-medium mb-2">📝 ${taskLabel}:</h4>
+                            <p class="text-gray-700 mb-4">${descText}</p>
 
                             <div class="flex space-x-3">
-                                <button onclick="showCodeExample('${partId}', '${moduleId}', '${topicId}')"
-                                        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                                    <i class="fas fa-code mr-2"></i>Code Beispiel
-                                </button>
                                 <button onclick="showLearningContent('${partId}', '${moduleId}', '${topicId}')"
                                         class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                                    <i class="fas fa-book mr-2"></i>Lerninhalte
+                                    <i class="fas fa-book mr-2"></i>${lang === 'de' ? 'Lerninhalte' : 'Learning Content'}
+                                </button>
+                                <button onclick="showCodeExample('${partId}', '${moduleId}', '${topicId}')"
+                                        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                    <i class="fas fa-code mr-2"></i>${lang === 'de' ? 'Code Beispiel' : 'Code Example'}
                                 </button>
                                 <button onclick="showTaskSolution('${partId}', '${moduleId}', '${topicId}')"
                                         class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                    <i class="fas fa-check mr-2"></i>Lösung
+                                    <i class="fas fa-check mr-2"></i>${lang === 'de' ? 'Aufgabe' : 'Exercise'}
                                 </button>
                             </div>
                         </div>
@@ -1004,7 +1641,9 @@
                 const response = await fetch(apiUrl);
                 const files = await response.json();
 
-                let html = '<div class="mt-6"><h4 class="text-lg font-semibold mb-3">📁 Verfügbare Dateien:</h4>';
+                const lang = getCurrentLanguage();
+                const filesTitle = lang === 'de' ? 'Verfügbare Dateien' : 'Available Files';
+                let html = `<div class="mt-6"><h4 class="text-lg font-semibold mb-3">📁 ${filesTitle}:</h4>`;
 
                 files.filter(file => file.name.endsWith('.py')).forEach(file => {
                     html += `
@@ -1013,7 +1652,7 @@
                                 <span class="font-medium">${file.name}</span>
                                 <button onclick="showPythonFile('${file.download_url}', '${file.name}')"
                                         class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                                    <i class="fas fa-eye mr-1"></i>Anzeigen
+                                    <i class="fas fa-eye mr-1"></i>${lang === 'de' ? 'Anzeigen' : 'View'}
                                 </button>
                             </div>
                         </div>
@@ -1023,7 +1662,9 @@
                 html += '</div>';
                 return html;
             } catch (error) {
-                return '<div class="mt-6 text-gray-500">Keine Python-Dateien gefunden.</div>';
+                const lang = getCurrentLanguage();
+                const noFilesText = lang === 'de' ? 'Keine Python-Dateien gefunden.' : 'No Python files found.';
+                return `<div class="mt-6 text-gray-500">${noFilesText}</div>`;
             }
         }
 
@@ -1031,7 +1672,8 @@
             try {
                 const response = await fetch(url);
                 const code = await response.text();
-                const explanations = explainPythonCode(code);
+                const fileId = `file-${Date.now()}`; // Unique ID for this popup
+                const explanations = await explainPythonCode(code, fileId);
 
                 const content = document.getElementById('taskContent');
                 content.innerHTML += `
@@ -1050,15 +1692,15 @@
                             </div>
                             <div class="flex">
                                 <!-- Code Section -->
-                                <div class="w-1/2 p-4 border-r">
+                                <div class="flex-1 p-4 border-r" style="min-width: 0;">
                                     <h4 class="font-semibold mb-2">📄 Code:</h4>
-                                    <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm"><code>${code}</code></pre>
+                                    <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm" style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code>${addLineNumbers(escapeHtml(code), fileId)}</code></pre>
                                 </div>
                                 <!-- Explanation Section -->
-                                <div class="w-1/2 p-4" id="codeExplanationPanel">
+                                <div class="flex-1 p-4" id="codeExplanationPanel" style="min-width: 0; max-width: 50%;">
                                     <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
-                                    <div class="space-y-3 text-sm">
-                                        ${explanations}
+                                    <div class="space-y-3 text-sm overflow-y-auto custom-scrollbar" style="max-height: 600px;">
+                                        ${await explainPythonCode(code, fileId)}
                                     </div>
                                 </div>
                             </div>
@@ -1079,10 +1721,165 @@
             }
         }
 
-        function explainPythonCode(code) {
+
+        // Load explanations from course_content JSON files
+        let loadedExplanations = {};
+
+        async function loadExplanationsForTopic(partId, moduleId, topicId) {
+            const key = `${partId}_${moduleId}_${topicId}`;
+            if (loadedExplanations[key]) {
+                return loadedExplanations[key];
+            }
+
+            try {
+                const response = await fetch(`course_content/${partId}/${moduleId}/${topicId}/explanations.json`);
+                if (response.ok) {
+                    const data = await response.json();
+                    loadedExplanations[key] = data.explanations;
+                    return data.explanations;
+                }
+            } catch (error) {
+                console.log(`No explanations found for ${key}`);
+            }
+            return null;
+        }
+
+        function findExplanationFromLoaded(codeLine, explanations, lang) {
+            if (!explanations) return null;
+
+            for (const [key, explanation] of Object.entries(explanations)) {
+                for (const pattern of explanation.patterns) {
+                    const regex = new RegExp(pattern);
+                    if (regex.test(codeLine.trim())) {
+                        return {
+                            emoji: explanation.emoji,
+                            title: explanation.title[lang] || explanation.title.en,
+                            dataType: explanation.dataType[lang] || explanation.dataType.en,
+                            syntax: explanation.syntax,
+                            usage: explanation.usage[lang] || explanation.usage.en,
+                            bestPractices: explanation.bestPractices[lang] || explanation.bestPractices.en
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function createDetailedTooltipContent(explanationData, codeLine, lineNumber) {
+            const lang = getCurrentLanguage();
+
+            // If we have structured data from JSON files, use that
+            if (explanationData.emoji && explanationData.title) {
+                return createStructuredTooltipContent(explanationData, lang);
+            }
+
+            // Fallback: Parse the old format
+            let emoji = '📝';
+            let title = 'Code Explanation';
+            let dataType = '';
+            let syntax = '';
+            let usage = '';
+            let bestPractices = [];
+
+            const detail = explanationData.detailed || explanationData.explanation || '';
+            if (detail) {
+                if (explanationData.simple) {
+                    const emojiMatch = explanationData.simple.match(/^([\u{1F000}-\u{1F9FF}]|\u{2600}-\u{26FF}|\u{2700}-\u{27BF})/u);
+                    if (emojiMatch) emoji = emojiMatch[1];
+
+                    const titleMatch = explanationData.simple.match(/<strong>(.*?)<\/strong>/);
+                    if (titleMatch) title = titleMatch[1];
+                }
+
+                const dataTypeMatch = detail.match(/<strong>📊[^:]*:<\/strong>\s*([^<]+)/);
+                if (dataTypeMatch) dataType = dataTypeMatch[1].trim();
+
+                const syntaxMatch = detail.match(/<strong>🎯[^:]*:<\/strong>\s*<code>([^<]+)<\/code>/);
+                if (syntaxMatch) syntax = syntaxMatch[1].trim();
+
+                const usageMatch = detail.match(/<strong>🔧[^:]*:<\/strong>\s*([^<]+?)(?=<br>|<strong>|$)/);
+                if (usageMatch) usage = usageMatch[1].trim();
+
+                const bestPracticesMatch = detail.match(/<strong>✨[^:]*:<\/strong><br>\s*(.*?)(?=<\/div>|$)/s);
+                if (bestPracticesMatch) {
+                    const practicesText = bestPracticesMatch[1];
+                    const practices = practicesText.split(/•\s*/).filter(p => p.trim());
+                    bestPractices = practices.map(p => p.replace(/<br>/g, '').trim()).filter(p => p);
+                }
+            }
+
+            return createStructuredTooltipContent({
+                emoji, title, dataType, syntax, usage, bestPractices
+            }, lang);
+        }
+
+        function createStructuredTooltipContent(data, lang) {
+            let tooltipContent = `
+                <div class="tooltip-header">
+                    <span class="tooltip-emoji">${data.emoji}</span>
+                    <span class="tooltip-title">${data.title}</span>
+                </div>
+            `;
+
+            if (data.dataType) {
+                tooltipContent += `
+                    <div class="tooltip-section">
+                        <span class="tooltip-label">${lang === 'de' ? '📊 DATENTYP' : '📊 DATA TYPE'}</span>
+                        <div class="tooltip-value">${data.dataType}</div>
+                    </div>
+                `;
+            }
+
+            if (data.syntax) {
+                tooltipContent += `
+                    <div class="tooltip-section">
+                        <span class="tooltip-label">${lang === 'de' ? '🎯 SYNTAX' : '🎯 SYNTAX'}</span>
+                        <div class="tooltip-value"><code>${data.syntax}</code></div>
+                    </div>
+                `;
+            }
+
+            if (data.usage) {
+                tooltipContent += `
+                    <div class="tooltip-section">
+                        <span class="tooltip-label">${lang === 'de' ? '🔧 VERWENDUNG' : '🔧 USAGE'}</span>
+                        <div class="tooltip-value">${data.usage}</div>
+                    </div>
+                `;
+            }
+
+            if (data.bestPractices && data.bestPractices.length > 0) {
+                tooltipContent += `
+                    <div class="best-practices">
+                        <span class="label">${lang === 'de' ? '✨ BEST PRACTICE 2025' : '✨ BEST PRACTICE 2025'}</span>
+                        <ul>
+                `;
+                data.bestPractices.forEach(practice => {
+                    tooltipContent += `<li>${practice}</li>`;
+                });
+                tooltipContent += `
+                        </ul>
+                    </div>
+                `;
+            }
+
+            return tooltipContent;
+        }
+
+        async function explainPythonCode(code, idPrefix = 'line', context = null) {
             const lines = code.split('\n');
             let explanations = '';
             let lineNumber = 1;
+            let loadedExplanationsForContext = null;
+
+            // Try to load explanations from JSON if context is provided
+            if (context && context.partId && context.moduleId && context.topicId) {
+                loadedExplanationsForContext = await loadExplanationsForTopic(
+                    context.partId, context.moduleId, context.topicId
+                );
+            }
+
+            const lang = getCurrentLanguage();
 
             lines.forEach(line => {
                 const trimmedLine = line.trim();
@@ -1091,13 +1888,32 @@
                     return; // Skip empty lines and comments
                 }
 
-                const explanation = explainCodeLine(trimmedLine, lineNumber);
-                if (explanation) {
+                let explanationData = null;
+
+                // First try to find explanation from loaded JSON
+                if (loadedExplanationsForContext) {
+                    explanationData = findExplanationFromLoaded(trimmedLine, loadedExplanationsForContext, lang);
+                }
+
+                // Fallback to original function
+                if (!explanationData) {
+                    explanationData = explainCodeLine(trimmedLine, lineNumber);
+                }
+
+                if (explanationData) {
+                    const simpleText = explanationData.simple ||
+                                     (explanationData.emoji && explanationData.title ?
+                                      `${explanationData.emoji} <strong>${explanationData.title}</strong>` :
+                                      'Code explanation');
+
                     explanations += `
-                        <div class="border-l-4 border-blue-500 pl-3 py-2 bg-blue-50">
+                        <div class="explanation-item border-l-4 border-blue-500 pl-3 py-2 bg-blue-50"
+                             onmouseover="highlightCodeLine('${idPrefix}-${lineNumber}')"
+                             onmouseout="unhighlightCodeLine('${idPrefix}-${lineNumber}')">
                             <div class="font-mono text-xs text-gray-600">Zeile ${lineNumber}:</div>
                             <div class="font-mono text-sm text-gray-800 mb-1">${escapeHtml(trimmedLine)}</div>
-                            <div class="text-gray-700">${explanation}</div>
+                            <div class="text-gray-700">${simpleText}</div>
+                            <div class="tooltip-content">${createDetailedTooltipContent(explanationData, line, lineNumber)}</div>
                         </div>
                     `;
                 }
@@ -1108,121 +1924,160 @@
         }
 
         function explainCodeLine(line, lineNumber) {
-            // Python code patterns and their explanations
+            const lang = getCurrentLanguage();
+
+            // Enhanced Python code patterns with detailed explanations
             const patterns = [
                 {
                     regex: /^print\s*\(/,
-                    explanation: '🖨️ <strong>Print-Statement:</strong> Gibt Text oder Variablen auf der Konsole aus.'
+                    simple: lang === 'de' ? '🖨️ Print-Statement' : '🖨️ Print Statement',
+                    detailed: lang === 'de' ?
+                        `<strong>📊 Datentyp:</strong> Built-in Funktion<br>
+                         <strong>🎯 Syntax:</strong> <code>print(value, ..., sep=' ', end='\\n')</code><br>
+                         <strong>🔧 Verwendung:</strong> Ausgabe von Werten auf der Konsole<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Verwende f-strings: <code>print(f"Wert: {variable}")</code><br>
+                         • Nutze <code>sep</code> für Trennzeichen: <code>print(a, b, sep='-')</code><br>
+                         • Logging für Production-Code statt print verwenden` :
+                        `<strong>📊 Data Type:</strong> Built-in function<br>
+                         <strong>🎯 Syntax:</strong> <code>print(value, ..., sep=' ', end='\\n')</code><br>
+                         <strong>🔧 Usage:</strong> Output values to console<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Use f-strings: <code>print(f"Value: {variable}")</code><br>
+                         • Use <code>sep</code> for separators: <code>print(a, b, sep='-')</code><br>
+                         • Use logging for production code instead of print`
                 },
                 {
-                    regex: /^def\s+(\w+)\s*\(/,
-                    explanation: '🔧 <strong>Funktionsdefinition:</strong> Erstellt eine wiederverwendbare Funktion.'
+                    regex: /^(\w+)\s*=\s*(\d+(?:\.\d+)?)\s*$/,
+                    explanation: lang === 'de' ?
+                        `📝 <strong>Numerische Variable</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Datentyp:</strong> ${/\./.test(line) ? 'Float (Dezimalzahl)' : 'Integer (Ganzzahl)'}<br>
+                         <strong>🎯 Syntax:</strong> <code>variable_name = value</code><br>
+                         <strong>🔧 Verwendung:</strong> Speichert numerische Werte<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Verwende Type Hints: <code>age: int = 25</code><br>
+                         • Aussagekräftige Variablennamen: <code>user_age</code> statt <code>a</code><br>
+                         • Konstanten in UPPERCASE: <code>MAX_SIZE = 100</code>
+                         </div>` :
+                        `📝 <strong>Numeric Variable</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Data Type:</strong> ${/\./.test(line) ? 'Float (decimal number)' : 'Integer (whole number)'}<br>
+                         <strong>🎯 Syntax:</strong> <code>variable_name = value</code><br>
+                         <strong>🔧 Usage:</strong> Stores numeric values<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Use Type Hints: <code>age: int = 25</code><br>
+                         • Descriptive variable names: <code>user_age</code> instead of <code>a</code><br>
+                         • Constants in UPPERCASE: <code>MAX_SIZE = 100</code>
+                         </div>`
                 },
                 {
-                    regex: /^if\s+.+:/,
-                    explanation: '🔀 <strong>If-Bedingung:</strong> Führt Code nur aus, wenn die Bedingung erfüllt ist.'
-                },
-                {
-                    regex: /^elif\s+.+:/,
-                    explanation: '🔀 <strong>Elif-Bedingung:</strong> Alternative Bedingung, wenn die vorherige nicht erfüllt ist.'
-                },
-                {
-                    regex: /^else\s*:/,
-                    explanation: '🔀 <strong>Else:</strong> Wird ausgeführt, wenn keine der vorherigen Bedingungen erfüllt ist.'
-                },
-                {
-                    regex: /^for\s+.+\s+in\s+.+:/,
-                    explanation: '🔄 <strong>For-Schleife:</strong> Wiederholt Code für jedes Element in einer Sammlung.'
-                },
-                {
-                    regex: /^while\s+.+:/,
-                    explanation: '🔄 <strong>While-Schleife:</strong> Wiederholt Code solange eine Bedingung erfüllt ist.'
+                    regex: /^(\w+)\s*=\s*["'].+["']\s*$/,
+                    explanation: lang === 'de' ?
+                        `📝 <strong>String Variable</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Datentyp:</strong> String (Zeichenkette)<br>
+                         <strong>🎯 Syntax:</strong> <code>variable = "text"</code> oder <code>variable = 'text'</code><br>
+                         <strong>🔧 Verwendung:</strong> Speichert Textdaten<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Verwende f-strings: <code>name = f"Hallo {user}"</code><br>
+                         • Konsistente Anführungszeichen (meist double quotes)<br>
+                         • Docstrings für mehrzeilige Texte: <code>"""text"""</code><br>
+                         • Type Hints: <code>message: str = "Hello"</code>
+                         </div>` :
+                        `📝 <strong>String Variable</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Data Type:</strong> String (text)<br>
+                         <strong>🎯 Syntax:</strong> <code>variable = "text"</code> or <code>variable = 'text'</code><br>
+                         <strong>🔧 Usage:</strong> Stores text data<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Use f-strings: <code>name = f"Hello {user}"</code><br>
+                         • Consistent quotes (usually double quotes)<br>
+                         • Docstrings for multi-line text: <code>"""text"""</code><br>
+                         • Type Hints: <code>message: str = "Hello"</code>
+                         </div>`
                 },
                 {
                     regex: /^import\s+(\w+)/,
-                    explanation: '📦 <strong>Import:</strong> Lädt ein externes Modul oder eine Bibliothek.'
+                    explanation: lang === 'de' ?
+                        `📦 <strong>Import Statement</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Typ:</strong> Import-Anweisung<br>
+                         <strong>🎯 Syntax:</strong> <code>import module_name</code><br>
+                         <strong>🔧 Verwendung:</strong> Lädt externe Module/Bibliotheken<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Imports am Dateianfang gruppieren<br>
+                         • Reihenfolge: Standard library → Third-party → Local<br>
+                         • Verwende <code>from module import specific_function</code><br>
+                         • Aliase für lange Namen: <code>import numpy as np</code>
+                         </div>` :
+                        `📦 <strong>Import Statement</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Type:</strong> Import statement<br>
+                         <strong>🎯 Syntax:</strong> <code>import module_name</code><br>
+                         <strong>🔧 Usage:</strong> Loads external modules/libraries<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Group imports at file top<br>
+                         • Order: Standard library → Third-party → Local<br>
+                         • Use <code>from module import specific_function</code><br>
+                         • Aliases for long names: <code>import numpy as np</code>
+                         </div>`
                 },
                 {
-                    regex: /^from\s+(\w+)\s+import/,
-                    explanation: '📦 <strong>From-Import:</strong> Importiert spezifische Funktionen aus einem Modul.'
-                },
-                {
-                    regex: /^class\s+(\w+)/,
-                    explanation: '🏗️ <strong>Klassendefinition:</strong> Erstellt eine neue Klasse (Bauplan für Objekte).'
-                },
-                {
-                    regex: /^return\s+/,
-                    explanation: '↩️ <strong>Return:</strong> Gibt einen Wert aus der Funktion zurück.'
-                },
-                {
-                    regex: /^try\s*:/,
-                    explanation: '🛡️ <strong>Try-Block:</strong> Versucht Code auszuführen und fängt mögliche Fehler ab.'
-                },
-                {
-                    regex: /^except/,
-                    explanation: '❌ <strong>Except-Block:</strong> Behandelt Fehler, die im Try-Block auftreten.'
-                },
-                {
-                    regex: /\s*=\s*\[.*\]/,
-                    explanation: '📋 <strong>Listen-Erstellung:</strong> Erstellt eine Liste mit mehreren Werten.'
-                },
-                {
-                    regex: /\s*=\s*\{.*\}/,
-                    explanation: '📖 <strong>Dictionary-Erstellung:</strong> Erstellt ein Wörterbuch mit Schlüssel-Wert-Paaren.'
-                },
-                {
-                    regex: /\s*=\s*\(.*\)/,
-                    explanation: '📦 <strong>Tuple-Erstellung:</strong> Erstellt ein unveränderliches Tupel.'
-                },
-                {
-                    regex: /^(\w+)\s*=\s*(.+)/,
-                    explanation: '📝 <strong>Variablen-Zuweisung:</strong> Speichert einen Wert in einer Variablen.'
-                },
-                {
-                    regex: /\.append\(/,
-                    explanation: '➕ <strong>Append-Methode:</strong> Fügt ein Element am Ende einer Liste hinzu.'
-                },
-                {
-                    regex: /\.split\(/,
-                    explanation: '✂️ <strong>Split-Methode:</strong> Teilt einen String in eine Liste auf.'
-                },
-                {
-                    regex: /\.join\(/,
-                    explanation: '🔗 <strong>Join-Methode:</strong> Verbindet Listenelemente zu einem String.'
-                },
-                {
-                    regex: /len\(/,
-                    explanation: '📏 <strong>Len-Funktion:</strong> Gibt die Anzahl der Elemente zurück.'
-                },
-                {
-                    regex: /range\(/,
-                    explanation: '🔢 <strong>Range-Funktion:</strong> Erstellt eine Zahlensequenz.'
-                },
-                {
-                    regex: /input\(/,
-                    explanation: '⌨️ <strong>Input-Funktion:</strong> Wartet auf Benutzereingabe.'
-                },
-                {
-                    regex: /^#/,
-                    explanation: '💬 <strong>Kommentar:</strong> Erklärung für Menschen, wird nicht ausgeführt.'
+                    regex: /^def\s+(\w+)\s*\(/,
+                    explanation: lang === 'de' ?
+                        `🔧 <strong>Funktionsdefinition</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Typ:</strong> Funktionsdefinition<br>
+                         <strong>🎯 Syntax:</strong> <code>def function_name(parameters):</code><br>
+                         <strong>🔧 Verwendung:</strong> Erstellt wiederverwendbare Code-Blöcke<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Type Hints verwenden: <code>def add(a: int, b: int) -> int:</code><br>
+                         • Docstrings für Dokumentation<br>
+                         • Snake_case für Funktionsnamen<br>
+                         • Single Responsibility Principle beachten
+                         </div>` :
+                        `🔧 <strong>Function Definition</strong>
+                         <div class="explanation-details mt-2 p-3 bg-gray-50 rounded">
+                         <strong>📊 Type:</strong> Function definition<br>
+                         <strong>🎯 Syntax:</strong> <code>def function_name(parameters):</code><br>
+                         <strong>🔧 Usage:</strong> Creates reusable code blocks<br>
+                         <strong>✨ Best Practice 2025:</strong><br>
+                         • Use Type Hints: <code>def add(a: int, b: int) -> int:</code><br>
+                         • Docstrings for documentation<br>
+                         • Snake_case for function names<br>
+                         • Follow Single Responsibility Principle
+                         </div>`
                 }
             ];
 
             for (const pattern of patterns) {
                 if (pattern.regex.test(line)) {
-                    return pattern.explanation;
+                    return {
+                        simple: pattern.simple || pattern.explanation,
+                        detailed: pattern.detailed || pattern.explanation
+                    };
                 }
             }
 
             // Check for specific Python keywords
             if (line.includes('==')) {
-                return '⚖️ <strong>Gleichheits-Vergleich:</strong> Prüft ob zwei Werte gleich sind.';
+                return {
+                    simple: '⚖️ Gleichheits-Vergleich',
+                    detailed: '<strong>Prüft ob zwei Werte gleich sind</strong><br>Syntax: <code>a == b</code>'
+                };
             }
             if (line.includes('!=')) {
-                return '⚖️ <strong>Ungleichheits-Vergleich:</strong> Prüft ob zwei Werte unterschiedlich sind.';
+                return {
+                    simple: '❌ Ungleichheits-Vergleich',
+                    detailed: '<strong>Prüft ob zwei Werte unterschiedlich sind</strong><br>Syntax: <code>a != b</code>'
+                };
             }
             if (line.includes('and') || line.includes('or') || line.includes('not')) {
-                return '🔗 <strong>Logische Operatoren:</strong> Verknüpft oder invertiert Bedingungen.';
+                return {
+                    simple: '🔗 Logische Operatoren',
+                    detailed: '<strong>Verknüpft oder invertiert Bedingungen</strong><br>Syntax: <code>a and b</code>, <code>a or b</code>, <code>not a</code>'
+                };
             }
 
             return null;
@@ -1234,8 +2089,129 @@
             return div.innerHTML;
         }
 
+        function addLineNumbers(code, idPrefix = 'line') {
+            const lines = code.split('\n');
+            return lines.map((line, index) => {
+                const lineNumber = index + 1;
+                return `<span class="code-line" id="${idPrefix}-${lineNumber}"><span class="line-number">${lineNumber}</span><span class="code-content">${line}</span></span>`;
+            }).join('\n');
+        }
+
+        async function addLineNumbersWithTooltips(code, idPrefix = 'line', context = null) {
+            const lines = code.split('\n');
+            let loadedExplanationsForContext = null;
+
+            // Try to load explanations from JSON if context is provided
+            if (context && context.partId && context.moduleId && context.topicId) {
+                loadedExplanationsForContext = await loadExplanationsForTopic(
+                    context.partId, context.moduleId, context.topicId
+                );
+            }
+
+            const lang = getCurrentLanguage();
+
+            return lines.map((line, index) => {
+                const lineNumber = index + 1;
+                const trimmedLine = line.trim();
+
+                if (trimmedLine === '' || trimmedLine.startsWith('#')) {
+                    return `<span class="code-line" id="${idPrefix}-${lineNumber}"><span class="line-number">${lineNumber}</span><span class="code-content">${escapeHtml(line)}</span></span>`;
+                }
+
+                // Try to find explanation for this line
+                let explanationData = null;
+                if (loadedExplanationsForContext) {
+                    explanationData = findExplanationFromLoaded(trimmedLine, loadedExplanationsForContext, lang);
+                }
+
+                // Fallback to original function
+                if (!explanationData) {
+                    explanationData = explainCodeLine(trimmedLine, lineNumber);
+                }
+
+                let processedLine = escapeHtml(line);
+
+                // If we have explanation data, add tooltips to the relevant parts
+                if (explanationData) {
+                    processedLine = addTooltipsToCodeLine(processedLine, explanationData, trimmedLine);
+                }
+
+                return `<span class="code-line" id="${idPrefix}-${lineNumber}"><span class="line-number">${lineNumber}</span><span class="code-content">${processedLine}</span></span>`;
+            }).join('\n');
+        }
+
+        function addTooltipsToCodeLine(processedLine, explanationData, originalLine) {
+            const lang = getCurrentLanguage();
+            const tooltipContent = createDetailedTooltipContent(explanationData, originalLine, 0);
+
+            // Define patterns to wrap with tooltips
+            const patterns = [
+                {
+                    regex: /\bprint\s*\(/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\b(\w+)\s*=\s*(\d+(?:\.\d+)?)\b/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\b(\w+)\s*=\s*["'][^"']*["']/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\b(\w+)\s*=\s*\[[^\]]*\]/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\bimport\s+\w+/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\bfrom\s+\w+\s+import\s+\w+/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\bif\s+[^:]+:/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\bfor\s+\w+\s+in\s+[^:]+:/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                },
+                {
+                    regex: /\bdef\s+\w+\s*\([^)]*\):/g,
+                    replacement: (match) => `<span class="tooltip">${match}<div class="tooltip-content">${tooltipContent}</div></span>`
+                }
+            ];
+
+            patterns.forEach(pattern => {
+                processedLine = processedLine.replace(pattern.regex, pattern.replacement);
+            });
+
+            return processedLine;
+        }
+
+        function highlightCodeLine(lineId) {
+            const element = document.getElementById(lineId);
+            if (element) {
+                element.classList.add('highlighted');
+                // Scroll into view if needed
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function unhighlightCodeLine(lineId) {
+            const element = document.getElementById(lineId);
+            if (element) {
+                element.classList.remove('highlighted');
+            }
+        }
+
+
         function showCourseOverview() {
-            document.getElementById('courseBreadcrumb').textContent = 'Course Overview';
+            const lang = getCurrentLanguage();
+            const overviewText = lang === 'de' ? 'Kursübersicht' : 'Course Overview';
+            document.getElementById('courseBreadcrumb').textContent = overviewText;
             document.getElementById('courseOverview').style.display = 'block';
             document.getElementById('moduleContent').style.display = 'none';
             document.getElementById('taskContent').style.display = 'none';
@@ -1429,87 +2405,151 @@ print("Code-Beispiel wird noch erstellt...")`;
             `;
         }
 
-        function showCodeExample(partId, moduleId, topicId) {
-            const code = getCodeExample(partId, moduleId, topicId);
-            const explanations = explainPythonCode(code);
+        async function showCodeExample(partId, moduleId, topicId) {
+            const lang = getCurrentLanguage();
+            const codeTitle = lang === 'de' ? 'Code Beispiel' : 'Code Example';
+            const explanationTitle = lang === 'de' ? 'Code-Erklärung' : 'Code Explanation';
 
-            const content = document.getElementById('taskContent');
-            content.innerHTML += `
-                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                    <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="text-lg font-semibold">Code Beispiel - ${topicId}</h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="flex">
-                            <!-- Code Section -->
-                            <div class="w-1/2 p-4 border-r">
-                                <h4 class="font-semibold mb-2">📄 Code:</h4>
-                                <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm"><code>${code}</code></pre>
+            try {
+                // Load code from file
+                const codePath = `course_content/${partId}/${moduleId}/${topicId}/code.py`;
+                const response = await fetch(codePath);
+                let code;
+
+                if (response.ok) {
+                    code = await response.text();
+                } else {
+                    // Fallback to existing function if file doesn't exist
+                    code = getCodeExample(partId, moduleId, topicId);
+                }
+
+                const codeId = `code-${Date.now()}`; // Unique ID for this popup
+                const context = { partId, moduleId, topicId };
+                const explanations = await explainPythonCode(code, codeId, context);
+                const content = document.getElementById('taskContent');
+
+                content.innerHTML += `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-lg max-w-6xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">${codeTitle} - ${topicId}</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
-                            <!-- Explanation Section -->
-                            <div class="w-1/2 p-4">
-                                <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
-                                <div class="space-y-3 text-sm">
-                                    ${explanations}
+                            <div class="flex">
+                                <!-- Code Section -->
+                                <div class="flex-1 p-4 border-r" style="min-width: 0;">
+                                    <h4 class="font-semibold mb-2">📄 Code:</h4>
+                                    <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm" style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code>${addLineNumbers(escapeHtml(code), codeId)}</code></pre>
+                                </div>
+                                <!-- Explanation Section -->
+                                <div class="flex-1 p-4" style="min-width: 0; max-width: 50%;">
+                                    <h4 class="font-semibold mb-2">💡 Code-Erklärung:</h4>
+                                    <div class="space-y-3 text-sm overflow-y-auto custom-scrollbar" style="max-height: 600px;">
+                                        ${explanations}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } catch (error) {
+                console.error('Error loading code example:', error);
+            }
         }
 
-        function showLearningContent(partId, moduleId, topicId) {
-            const content = getLearningContent(partId, moduleId, topicId);
+        async function showLearningContent(partId, moduleId, topicId) {
+            const lang = getCurrentLanguage();
+            const title = lang === 'de' ? 'Lerninhalte' : 'Learning Content';
 
-            const container = document.getElementById('taskContent');
-            container.innerHTML += `
-                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                    <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="text-lg font-semibold">Lerninhalte - ${topicId}</h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="p-6">
-                            ${content}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+            try {
+                // Load learning content from file
+                const contentPath = `course_content/${partId}/${moduleId}/${topicId}/learning_${lang}.html`;
+                const response = await fetch(contentPath);
+                let content;
 
-        function showTaskSolution(partId, moduleId, topicId) {
-            // This would load solutions from GitHub or show practice tasks
-            const container = document.getElementById('taskContent');
-            container.innerHTML += `
-                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
-                    <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="text-lg font-semibold">Lösung - ${topicId}</h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="p-6">
-                            <h4 class="font-semibold mb-3">🎯 Übungsaufgaben</h4>
-                            <div class="space-y-4">
-                                <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
-                                    <h5 class="font-medium">Aufgabe 1:</h5>
-                                    <p class="text-sm text-gray-700">Erstelle ein Python-Skript für ${topicId}</p>
-                                </div>
-                                <div class="bg-gray-100 p-4 rounded">
-                                    <p class="text-sm text-gray-600">💡 <strong>Tipp:</strong> Schaue dir erst das Code-Beispiel an und probiere es selbst aus!</p>
-                                </div>
+                if (response.ok) {
+                    content = await response.text();
+                } else {
+                    // Fallback to existing function if file doesn't exist
+                    content = getLearningContent(partId, moduleId, topicId);
+                }
+
+                const container = document.getElementById('taskContent');
+                container.innerHTML += `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">${title} - ${topicId}</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                ${content}
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } catch (error) {
+                console.error('Error loading learning content:', error);
+            }
+        }
+
+        async function showTaskSolution(partId, moduleId, topicId) {
+            const lang = getCurrentLanguage();
+            const title = lang === 'de' ? 'Aufgaben' : 'Exercises';
+
+            try {
+                // Load exercise content from file
+                const exercisePath = `course_content/${partId}/${moduleId}/${topicId}/exercise_${lang}.html`;
+                const response = await fetch(exercisePath);
+                let content;
+
+                if (response.ok) {
+                    content = await response.text();
+                } else {
+                    // Fallback content if file doesn't exist
+                    const taskTitle = lang === 'de' ? '🎯 Übungsaufgaben' : '🎯 Exercises';
+                    const task1 = lang === 'de' ? 'Aufgabe 1:' : 'Task 1:';
+                    const taskDesc = lang === 'de' ? `Erstelle ein Python-Skript für ${topicId}` : `Create a Python script for ${topicId}`;
+                    const tipLabel = lang === 'de' ? 'Tipp:' : 'Tip:';
+                    const tipText = lang === 'de' ? 'Schaue dir erst das Code-Beispiel an und probiere es selbst aus!' : 'Look at the code example first and try it yourself!';
+
+                    content = `
+                        <h4 class="font-semibold mb-3">${taskTitle}</h4>
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
+                                <h5 class="font-medium">${task1}</h5>
+                                <p class="text-sm text-gray-700">${taskDesc}</p>
+                            </div>
+                            <div class="bg-gray-100 p-4 rounded">
+                                <p class="text-sm text-gray-600">💡 <strong>${tipLabel}</strong> ${tipText}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const container = document.getElementById('taskContent');
+                container.innerHTML += `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-lg max-w-4xl max-h-5/6 overflow-auto m-4" onclick="event.stopPropagation()">
+                            <div class="p-4 border-b flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">${title} - ${topicId}</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                ${content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading exercise content:', error);
+            }
         }
 
         // Make functions globally available

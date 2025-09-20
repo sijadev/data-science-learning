@@ -1,0 +1,98 @@
+{
+  "topic": "Loops - For and While",
+  "explanations": {
+    "for_loop": {
+      "emoji": "🔄",
+      "title": {
+        "en": "For Loop",
+        "de": "For-Schleife"
+      },
+      "dataType": {
+        "en": "Loop structure",
+        "de": "Schleifenstruktur"
+      },
+      "syntax": "for item in iterable:",
+      "usage": {
+        "en": "Iterate over sequences",
+        "de": "Iteration über Sequenzen"
+      },
+      "bestPractices": {
+        "en": [
+          "enumerate() for index: for i, item in enumerate(items):",
+          "zip() for parallel iteration",
+          "List comprehensions for simple transformations"
+        ],
+        "de": [
+          "enumerate() für Index: for i, item in enumerate(items):",
+          "zip() für parallele Iteration",
+          "List Comprehensions für einfache Transformationen"
+        ]
+      },
+      "patterns": [
+        "^for\\s+\\w+\\s+in\\s+.+:\\s*$"
+      ]
+    },
+    "while_loop": {
+      "emoji": "🔄",
+      "title": {
+        "en": "While Loop",
+        "de": "While-Schleife"
+      },
+      "dataType": {
+        "en": "Loop structure",
+        "de": "Schleifenstruktur"
+      },
+      "syntax": "while condition:",
+      "usage": {
+        "en": "Repeat while condition is true",
+        "de": "Wiederhole solange Bedingung wahr ist"
+      },
+      "bestPractices": {
+        "en": [
+          "Ensure the condition eventually becomes False",
+          "Use break and continue appropriately",
+          "Prefer for loops when possible"
+        ],
+        "de": [
+          "Stelle sicher, dass die Bedingung irgendwann False wird",
+          "Verwende break und continue angemessen",
+          "Bevorzuge for-Schleifen wenn möglich"
+        ]
+      },
+      "patterns": [
+        "^while\\s+.+:\\s*$"
+      ]
+    },
+    "range_function": {
+      "emoji": "🔢",
+      "title": {
+        "en": "Range Function",
+        "de": "Range-Funktion"
+      },
+      "dataType": {
+        "en": "Built-in function",
+        "de": "Eingebaute Funktion"
+      },
+      "syntax": "range(start, stop, step)",
+      "usage": {
+        "en": "Generate sequence of numbers",
+        "de": "Erzeugt Zahlensequenz"
+      },
+      "bestPractices": {
+        "en": [
+          "range(10) for 0 to 9",
+          "range(1, 11) for 1 to 10",
+          "range(0, 10, 2) for even numbers"
+        ],
+        "de": [
+          "range(10) für 0 bis 9",
+          "range(1, 11) für 1 bis 10",
+          "range(0, 10, 2) für gerade Zahlen"
+        ]
+      },
+      "patterns": [
+        "range\\s*\\("
+      ]
+    }
+  }
+}

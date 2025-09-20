@@ -1,0 +1,101 @@
+{
+  "topic": "Imports and Modules",
+  "explanations": {
+    "import_statement": {
+      "emoji": "📦",
+      "title": {
+        "en": "Import Statement",
+        "de": "Import-Anweisung"
+      },
+      "dataType": {
+        "en": "Import statement",
+        "de": "Import-Anweisung"
+      },
+      "syntax": "import module_name",
+      "usage": {
+        "en": "Loads external modules/libraries",
+        "de": "Lädt externe Module/Bibliotheken"
+      },
+      "bestPractices": {
+        "en": [
+          "Group imports at file top",
+          "Order: Standard library → Third-party → Local",
+          "Use from module import specific_function",
+          "Aliases for long names: import numpy as np"
+        ],
+        "de": [
+          "Imports am Dateianfang gruppieren",
+          "Reihenfolge: Standard library → Third-party → Local",
+          "Verwende from module import specific_function",
+          "Aliase für lange Namen: import numpy as np"
+        ]
+      },
+      "patterns": [
+        "^import\\s+\\w+",
+        "^from\\s+\\w+\\s+import\\s+"
+      ]
+    },
+    "from_import": {
+      "emoji": "📦",
+      "title": {
+        "en": "From Import",
+        "de": "From Import"
+      },
+      "dataType": {
+        "en": "Import statement",
+        "de": "Import-Anweisung"
+      },
+      "syntax": "from module import function",
+      "usage": {
+        "en": "Import specific functions/classes",
+        "de": "Importiert spezifische Funktionen/Klassen"
+      },
+      "bestPractices": {
+        "en": [
+          "More specific than full module import",
+          "Avoid from module import * (star imports)",
+          "Use as keyword for aliases"
+        ],
+        "de": [
+          "Spezifischer als vollständiger Modul-Import",
+          "Vermeide from module import * (Star-Imports)",
+          "Verwende as-Keyword für Aliase"
+        ]
+      },
+      "patterns": [
+        "^from\\s+\\w+\\s+import\\s+\\w+"
+      ]
+    },
+    "import_alias": {
+      "emoji": "🏷️",
+      "title": {
+        "en": "Import Alias",
+        "de": "Import-Alias"
+      },
+      "dataType": {
+        "en": "Import statement",
+        "de": "Import-Anweisung"
+      },
+      "syntax": "import module as alias",
+      "usage": {
+        "en": "Create shorter names for modules",
+        "de": "Erstellt kürzere Namen für Module"
+      },
+      "bestPractices": {
+        "en": [
+          "Common aliases: numpy as np, pandas as pd",
+          "Use meaningful abbreviations",
+          "Consistent across your project"
+        ],
+        "de": [
+          "Übliche Aliase: numpy as np, pandas as pd",
+          "Verwende sinnvolle Abkürzungen",
+          "Konsistent im gesamten Projekt"
+        ]
+      },
+      "patterns": [
+        "import\\s+\\w+\\s+as\\s+\\w+"
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "topic": "First Steps & Hello World",
+  "explanations": {
+    "print": {
+      "emoji": "🖨️",
+      "title": {
+        "en": "Print Statement",
+        "de": "Print-Statement"
+      },
+      "dataType": {
+        "en": "Built-in function",
+        "de": "Eingebaute Funktion"
+      },
+      "syntax": "print(value, ..., sep=' ', end='\\n')",
+      "usage": {
+        "en": "Output values to console",
+        "de": "Ausgabe von Werten auf der Konsole"
+      },
+      "bestPractices": {
+        "en": [
+          "Use f-strings: print(f\"Value: {variable}\")",
+          "Use sep for separators: print(a, b, sep='-')",
+          "Use logging for production code instead of print"
+        ],
+        "de": [
+          "Verwende f-strings: print(f\"Wert: {variable}\")",
+          "Nutze sep für Trennzeichen: print(a, b, sep='-')",
+          "Logging für Production-Code statt print verwenden"
+        ]
+      },
+      "patterns": [
+        "^print\\s*\\("
+      ]
+    },
+    "string_variable": {
+      "emoji": "📝",
+      "title": {
+        "en": "String Variable",
+        "de": "String Variable"
+      },
+      "dataType": {
+        "en": "String (text)",
+        "de": "String (Zeichenkette)"
+      },
+      "syntax": "variable = \"text\" or variable = 'text'",
+      "usage": {
+        "en": "Stores text data",
+        "de": "Speichert Textdaten"
+      },
+      "bestPractices": {
+        "en": [
+          "Use f-strings: name = f\"Hello {user}\"",
+          "Consistent quotes (usually double quotes)",
+          "Docstrings for multi-line text: \"\"\"text\"\"\"",
+          "Type Hints: message: str = \"Hello\""
+        ],
+        "de": [
+          "Verwende f-strings: name = f\"Hallo {user}\"",
+          "Konsistente Anführungszeichen (meist double quotes)",
+          "Docstrings für mehrzeilige Texte: \"\"\"text\"\"\"",
+          "Type Hints: message: str = \"Hello\""
+        ]
+      },
+      "patterns": [
+        "^(\\w+)\\s*=\\s*[\"'].+[\"']\\s*$"
+      ]
+    }
+  }
+}

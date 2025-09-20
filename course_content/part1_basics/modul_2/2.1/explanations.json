@@ -1,0 +1,67 @@
+{
+  "topic": "Operators",
+  "explanations": {
+    "arithmetic_operators": {
+      "emoji": "🔢",
+      "title": {
+        "en": "Arithmetic Operators",
+        "de": "Arithmetische Operatoren"
+      },
+      "dataType": {
+        "en": "Mathematical operations",
+        "de": "Mathematische Operationen"
+      },
+      "syntax": "+, -, *, /, //, %, **",
+      "usage": {
+        "en": "Perform mathematical calculations",
+        "de": "Führt mathematische Berechnungen durch"
+      },
+      "bestPractices": {
+        "en": [
+          "Use parentheses for complex expressions: (a + b) * c",
+          "Be aware of operator precedence",
+          "Use // for integer division, / for float division"
+        ],
+        "de": [
+          "Verwende Klammern für komplexe Ausdrücke: (a + b) * c",
+          "Beachte die Operatorpriorität",
+          "Verwende // für Ganzzahl-Division, / für Float-Division"
+        ]
+      },
+      "patterns": [
+        "\\+|\\-|\\*|\\/|\\/\\/|\\%|\\*\\*"
+      ]
+    },
+    "comparison_operators": {
+      "emoji": "⚖️",
+      "title": {
+        "en": "Comparison Operators",
+        "de": "Vergleichsoperatoren"
+      },
+      "dataType": {
+        "en": "Boolean comparison",
+        "de": "Boolean-Vergleich"
+      },
+      "syntax": "==, !=, <, >, <=, >=",
+      "usage": {
+        "en": "Compare values and return True/False",
+        "de": "Vergleicht Werte und gibt True/False zurück"
+      },
+      "bestPractices": {
+        "en": [
+          "Use == for equality, not = (assignment)",
+          "Use is for identity comparison",
+          "Chain comparisons: 0 < x < 10"
+        ],
+        "de": [
+          "Verwende == für Gleichheit, nicht = (Zuweisung)",
+          "Verwende is für Identitätsvergleich",
+          "Verkette Vergleiche: 0 < x < 10"
+        ]
+      },
+      "patterns": [
+        "==|!=|<=|>=|<|>"
+      ]
+    }
+  }
+}
