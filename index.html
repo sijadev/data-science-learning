@@ -2602,14 +2602,18 @@ print("Code-Beispiel wird noch erstellt...")`;
             const lang = getCurrentLanguage();
             const title = lang === 'de' ? 'Lerninhalte' : 'Learning Content';
 
+            console.log('showLearningContent called with:', {partId, moduleId, topicId, lang});
+
             try {
                 let content;
                 let contentFound = false;
 
                 // Try to load markdown content from the new Python course structure
-                if (partId.includes('python')) {
+                if (partId.includes('part') || partId.includes('basics') || partId.includes('advanced') || partId.includes('expert')) {
                     const markdownFileName = lang === 'de' ? 'learning_content.md' : 'learning_content_en.md';
                     const contentPath = `course/python/${partId}/${moduleId}/${markdownFileName}`;
+
+                    console.log('Trying to load:', contentPath);
 
                     try {
                         // Try to load from GitHub API first
@@ -2622,9 +2626,12 @@ print("Code-Beispiel wird noch erstellt...")`;
                             // Convert markdown to HTML (basic conversion)
                             content = convertMarkdownToHTML(markdownContent);
                             contentFound = true;
+                            console.log('Successfully loaded from GitHub API, content length:', content.length);
+                        } else {
+                            console.log('GitHub API response not ok:', response.status, response.statusText);
                         }
                     } catch (apiError) {
-                        console.log('GitHub API failed, trying direct fetch...');
+                        console.log('GitHub API failed, trying direct fetch...', apiError);
 
                         // Fallback to direct fetch
                         try {
@@ -2633,9 +2640,12 @@ print("Code-Beispiel wird noch erstellt...")`;
                                 const markdownContent = await directResponse.text();
                                 content = convertMarkdownToHTML(markdownContent);
                                 contentFound = true;
+                                console.log('Successfully loaded from direct fetch, content length:', content.length);
+                            } else {
+                                console.log('Direct fetch response not ok:', directResponse.status, directResponse.statusText);
                             }
                         } catch (directError) {
-                            console.log('Direct fetch also failed');
+                            console.log('Direct fetch also failed:', directError);
                         }
                     }
                 }
